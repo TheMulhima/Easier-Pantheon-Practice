@@ -1,4 +1,5 @@
 ﻿using Modding;
+using System;
 using System.Reflection;
 
 namespace Easier_Ascended
@@ -30,12 +31,7 @@ namespace Easier_Ascended
             ModHooks.Instance.NewGameHook += New_Game_Easier_Ascended; 
             ModHooks.Instance.LanguageGetHook += BossDesc;
         }
-
-        private void New_Game_Easier_Ascended()
-        {
-            GameManager.instance.gameObject.AddComponent<FindBoss>();
-        }
-
+        
         public string BossDesc(string key, string sheet)
         { 
             if (key == "CHALLENGE_UI_LEVEL2") return "P5 PRACTICE";
@@ -67,6 +63,10 @@ namespace Easier_Ascended
             return Language.Language.GetInternal(key, sheet);
         }
 
+        private void New_Game_Easier_Ascended()
+        {
+            GameManager.instance.gameObject.AddComponent<FindBoss>();
+        }
         private void Load_Easier_Ascended(SaveGameData data)
         {
             GameManager.instance.gameObject.AddComponent<FindBoss>();

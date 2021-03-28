@@ -235,6 +235,7 @@ namespace Easier_Ascended
 
         public static int Only1Damage(int damage)//does the p5 damage and fixes lifeblood issue
         {
+            if (damage == 1) return 1; //makes it atleast playable in attuned
             current_blue_masks = PlayerData.instance.healthBlue;
             damage_to_be_dealt = damage / 2;
             //Modding.Logger.Log(damage + " became " + damage_to_be_dealt + " damage");
