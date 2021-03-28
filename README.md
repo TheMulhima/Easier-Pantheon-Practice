@@ -6,7 +6,7 @@ A mod that allows practice for P5 in HoG. This mod changes the health and damage
 ## Uses:
 - It can be used to practice specific bosses in P5 such as **Markoth**.
 - The remove health and add lifeblood features can be used for practicing **Fury Strats**.
-- It is compatible with Toggleable bindings which allows for practice for P5 AB bosses such as **AB Collector**.
+- It is compatible with Toggleable bindings which allows practice for P5 AB bosses such as **AB Collector**.
 
 ## Dependancies:
 - The only dependancy is Mod Common and the Modding API (obviously).
