@@ -19,6 +19,7 @@ A mod that allows you to practice for P5 in HoG. This mod changes the health and
 ## Other:
 - With this mod, most **Attuned Bosses** in HoG deal 0 damage. If you want to practice in attuned, turn off this mod in the game settings.
 - The mod affects bosses of health. Needless to say, it shouldn't be used with other modded boss. If you do want to, turn this mod off in the game settings.
+- If you have any problems you can message me on discord at Mulhima#2695
 
 # Credits
 - Thank you to everyone in #modding-development for helping me make this mod and also for having open source code for me to read. This mod was heavily influcenced by the mods Pale Prince by fifty-six, Mantis Gods by fifty-six and Buzzbo by thegodfriend.
