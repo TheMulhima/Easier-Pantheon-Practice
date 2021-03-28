@@ -5,7 +5,7 @@ A mod that allows you to practice for P5 in HoG. This mod changes the health and
   
 ## Uses:
 - It can be used to practice specific bosses in P5 such as markoth.
-- The remove health and add lifeblood can be used for practice for fury strats.
+- The remove health and add lifeblood can be used for practicing fury strats.
 
 ## Dependancies:
 - The only dependancy is Mod Common and the Modding API (obviously).
