@@ -64,7 +64,7 @@ namespace Easier_Ascended
             "GG_Mantis_Lords_V",
             "GG_God_Tamer",
             "GG_Watcher_Knights",
-            "G_Soul_Tyrant",
+            "GG_Soul_Tyrant",
         };
 
         private void Start()
@@ -93,7 +93,7 @@ namespace Easier_Ascended
                 if (arg1.name == "GG_Soul_Master") StartCoroutine(_2BossException("Mage Lord", "Mage Lord Phase2"));                        
                 if (arg1.name == "GG_Oblobbles") StartCoroutine(_2BossException("Mega Fat Bee", "Mega Fat Bee (1)"));                        
                 if (arg1.name == "GG_God_Tamer") StartCoroutine(_2BossException("Lancer","Lobster"));                        
-                if (arg1.name == "G_Soul_Tyrant") StartCoroutine(_2BossException("Dream Mage Lord", "Dream Mage Lord Phase2"));                        
+                if (arg1.name == "GG_Soul_Tyrant") StartCoroutine(_2BossException("Dream Mage Lord", "Dream Mage Lord Phase2"));                        
                 if (arg1.name == "GG_Nailmasters") StartCoroutine(_2BossException("Oro", "Mato"));
                 if (arg1.name == "GG_Mantis_Lords_V") StartCoroutine(SistersOfBattle());                        
                 if (arg1.name == "GG_Watcher_Knights") StartCoroutine(WatcherKnight());
@@ -140,7 +140,7 @@ namespace Easier_Ascended
                 //Modding.Logger.Log("[Easier-Ascended]: Waiting for: " + CurrentBoss + " and " + CurrentBoss_1);
                 _TheBoss = GameObject.Find(CurrentBoss);
                 _TheBoss_1 = GameObject.Find(CurrentBoss_1);
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(1.0f);
             }
             while (_TheBoss == null || _TheBoss_1 == null);
             Modding.Logger.Log("[Easier-Ascended]: Altered The Bosses: " + CurrentBoss + " and " + CurrentBoss_1);
