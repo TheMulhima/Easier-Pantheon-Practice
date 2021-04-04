@@ -65,21 +65,26 @@ namespace Easier_Ascended
 
             //changes the bosses health
             health.hp = _BossHealth[FindBoss.CurrentBoss];
-            Modding.Logger.Log("[Easier-Ascended]: Health of \"" + FindBoss.CurrentBoss + "\" changed to: " + health.hp);
+            EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss + "\" changed to: " + health.hp);
 
             ChangeFSM();//some bosses' phase change/health doesnt occur correctly hence requies changing them by editting FSMs
         }
 
         private void ApplySettings()
         {
-            Modding.Logger.Log("[Easier-Ascended]: Applying Damage Setting");
-            if (EasierAscended.DoDamage > 1) HeroController.instance.TakeHealth(EasierAscended.DoDamage); ;//the removing health allows the player to move during boss scream. so its best not to do it if its not required
+            if (!EasierAscended.radiant)
+            {
+                //done only if hitless option is turned off
+                EasierAscended.Instance.Log("Applying Damage Setting");
+                if (EasierAscended.DoDamage > 1) HeroController.instance.TakeHealth(EasierAscended.DoDamage); ;//doing this allows the player to move during the boss scream. so its bext to check and only do it if it is required
 
-            Modding.Logger.Log("[Easier-Ascended]: Applying Soul Setting");
+                EasierAscended.Instance.Log("Applying Lifeblood Setting");
+                for (int lifeblood_increment = 0; lifeblood_increment < EasierAscended.AddBlueMasks; lifeblood_increment++) EventRegister.SendEvent("ADD BLUE HEALTH");//playerdata.instance.bluehealth doesnt update lifeblood on HUD
+            }
+
+            //done regardless of the option
+            EasierAscended.Instance.Log("Applying Soul Setting");
             PlayerData.instance.AddMPCharge(EasierAscended.AddSoul);
-
-            Modding.Logger.Log("[Easier-Ascended]: Applying Lifeblood Setting");
-            for (int lifeblood_increment = 0; lifeblood_increment < EasierAscended.AddBlueMasks; lifeblood_increment++) EventRegister.SendEvent("ADD BLUE HEALTH");//playerdata.instance.bluehealth doesnt update lifeblood on HUD
         }
 
         private void ChangeFSM()
@@ -96,20 +101,20 @@ namespace Easier_Ascended
         }
         private void PV()
         {
-            Modding.Logger.Log("[Easier-Ascended]: Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Control");
             _control.Fsm.GetFsmInt("Half HP").Value = health.hp * 2/3;//WHY IS THIS NAMED HALF HP???
             _control.Fsm.GetFsmInt("Quarter HP").Value = health.hp * 1 / 3;//WHY IS THIS NAMED QUATER HP???
         }
         private void Collector()
         {
-            Modding.Logger.Log("[Easier-Ascended]: Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Phase Control");
             _control.Fsm.GetFsmInt("Phase 2 HP").Value = 300;
         }
         private void Grimms()
         {
-            Modding.Logger.Log("[Easier-Ascended]: Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Control");
             _control.Fsm.GetFsmInt("Rage HP 1").Value = health.hp * 3 / 4;
             _control.Fsm.GetFsmInt("Rage HP 2").Value = health.hp * 2 / 4;
@@ -117,31 +122,31 @@ namespace Easier_Ascended
         }
         private void NailMasters()
         {
-            Modding.Logger.Log("[Easier-Ascended]: Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("nailmaster");
             _control.Fsm.GetFsmInt("P2 HP").Value = 600;
         }
         private void DungDefender()
         {
-            Modding.Logger.Log("[Easier-Ascended]: Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Dung Defender");
             _control.Fsm.GetFsmInt("Rage HP").Value = 350;
         }
         private void Sly()
         {
-            Modding.Logger.Log("[Easier-Ascended]: Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Control");
             _control.Fsm.GetFsmInt("Ascended HP").Value = 250;//WHY IS THIS NAMED ASCENDED HP IT LITERALLY MAKES NO SENSE!!
         }
         private void FailedChampion()
         {
-            Modding.Logger.Log("[Easier-Ascended]: Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("FalseyControl");
             _control.Fsm.GetFsmInt("Recover HP").Value = 360;
         }
         private void FalseKnight()
         {
-            Modding.Logger.Log("[Easier-Ascended]: Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Check Health");//WHY DOES FK AND FC HAVE THEIR RECOVER HEALTH IN DIFFERENT FSMs
             _control.Fsm.GetFsmInt("Recover HP").Value = 260;
         }
@@ -185,36 +190,36 @@ namespace Easier_Ascended
         }
         private void Start()
         {
-            //Modding.Logger.Log(FindBoss.CurrentBoss_1 +": "+ health.hp);
+            //EasierAscended.Instance.Log(FindBoss.CurrentBoss_1 +": "+ health.hp);
             if (FindBoss.altered_1 == false)//this if condition helps reuse this class for SOB and WK
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_1];
                 FindBoss.altered_1 = true;
-                Modding.Logger.Log("[Easier-Ascended]: Health of \"" + FindBoss.CurrentBoss_1 + "\" changed to: " + health.hp);
+                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_1 + "\" changed to: " + health.hp);
             }
             else if (FindBoss.altered_2 == false)
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_2];
                 FindBoss.altered_2 = true;
-                Modding.Logger.Log("[Easier-Ascended]: Health of \"" + FindBoss.CurrentBoss_2 + "\" changed to: " + health.hp);
+                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_2 + "\" changed to: " + health.hp);
             }
             else if (FindBoss.altered_3 == false)
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_3];
                 FindBoss.altered_3 = true;
-                Modding.Logger.Log("[Easier-Ascended]: Health of \"" + FindBoss.CurrentBoss_3 + "\" changed to: " + health.hp);
+                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_3 + "\" changed to: " + health.hp);
             }
             else if (FindBoss.altered_4 == false)
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_2];
                 FindBoss.altered_4 = true;
-                Modding.Logger.Log("[Easier-Ascended]: Health of \"" + FindBoss.CurrentBoss_4 + "\" changed to: " + health.hp);
+                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_4 + "\" changed to: " + health.hp);
             }
             else if (FindBoss.altered_5 == false)
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_5];
                 FindBoss.altered_5 = true;
-                Modding.Logger.Log("[Easier-Ascended]: Health of \"" + FindBoss.CurrentBoss_5 + "\" changed to: " + health.hp);
+                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_5 + "\" changed to: " + health.hp);
             }
         }
     }

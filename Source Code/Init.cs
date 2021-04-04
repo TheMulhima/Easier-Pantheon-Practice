@@ -8,7 +8,10 @@ namespace Easier_Ascended
     {
         //stores them like this so it can be acessed by the other classes
         public static int DoDamage, AddBlueMasks, AddSoul;
-        public static bool _unloaded;
+        public static bool radiant,_unloaded;
+
+        internal static EasierAscended Instance;
+
         public EasierAscended() : base("Easier Ascended") { }//Mod name on top left
         public override string GetVersion() => Assembly.GetExecutingAssembly().GetName().Version.ToString();//cuz im lazy to increment it myself
         public GlobalModSettings _globalSettings = new GlobalModSettings(); //get the settings from settings file
@@ -20,12 +23,18 @@ namespace Easier_Ascended
         }
         public override void Initialize()
         {
+
+            Instance = this;
+
             //intilises the variables so it can be used by other classes
-            _unloaded = false;//to make sure the mod is toggleable
             Log("Easier Ascended Mod Initialized");
+
+            _unloaded = false;//to make sure the mod is toggleable
+
             DoDamage = 2 * _globalSettings.remove_health; //x2 becuase the function is called after Only1Damage is called
             AddBlueMasks = _globalSettings.lifeblood;
-            AddSoul = _globalSettings.soul; 
+            AddSoul = _globalSettings.soul;
+            radiant = _globalSettings.hitless_practice;
 
             ModHooks.Instance.AfterSavegameLoadHook += Load_Easier_Ascended;//loads mod when save game is loaded
             ModHooks.Instance.NewGameHook += New_Game_Easier_Ascended; 
@@ -36,7 +45,7 @@ namespace Easier_Ascended
         { 
             if (key == "CHALLENGE_UI_LEVEL2") return "P5 PRACTICE";
 
-            //for the trolls
+            #region //for the trolls
             if (key == "NAME_MEGA_MOSS_CHARGER") return "UNKILLABLE MOSS CHARGER";
             if (key == "GG_S_MEGAMOSS") return "The True Champion of the Gods. Try as hard as you want, you can not kill me";
             if (key == "MEGA_MOSS_SUPER") return "UNKILLABLE";
@@ -59,7 +68,9 @@ namespace Easier_Ascended
             if (key == "UI_BEGIN") return "Let My Suffering Begin";
             if (key == "CHARM_NAME_2") return "OP Compass";
             if (key == "CHARM_DESC_2") return "Its the most OP charm in the game.<br><br>Wear this charm to get good";
-            
+
+            #endregion
+
             return Language.Language.GetInternal(key, sheet);
         }
 

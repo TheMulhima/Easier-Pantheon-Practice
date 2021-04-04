@@ -74,7 +74,6 @@ namespace Easier_Ascended
 
         private void SceneChanged(Scene arg0, Scene arg1)
         {
-            //Modding.Logger.Log("[Easier-Ascended]: Pervious scene is " + arg0.name + " and next scene is " + arg1.name);
             if (EasierAscended._unloaded) return;//helps keep mod toggleable
 
             if (arg0.name == "GG_Workshop")//makes sure the mod isnt triggered when playing pantheons
@@ -108,18 +107,16 @@ namespace Easier_Ascended
 
         private static IEnumerator p5Boss()
         {
-            //Modding.Logger.Log("[Easier-Ascended]: Altering Boss");
             _TheBoss = GameObject.Find(CurrentBoss);
             yield return new WaitForSeconds(0.5f);
 
             do//makes sure to keep checking for the boss until its found. the time taken is different for each boss
             {
                 _TheBoss = GameObject.Find(CurrentBoss);
-                //Modding.Logger.Log("[Easier-Ascended]: Waiting for: " + CurrentBoss);
                 yield return new WaitForSeconds(0.5f);
             }
             while (_TheBoss == null);
-            Modding.Logger.Log("[Easier-Ascended]: Altered The Boss: " + CurrentBoss);
+            EasierAscended.Instance.Log("Altered The Boss: " + CurrentBoss);
             _TheBoss.AddComponent<BossNerf>();//reduces health and applys the settings
 
         }
@@ -130,20 +127,18 @@ namespace Easier_Ascended
             CurrentBoss_1 = Boss_name_2;
 
 
-            //Modding.Logger.Log("[Easier-Ascended]: Altering Boss " + CurrentBoss + " and " + CurrentBoss_1);
             _TheBoss = GameObject.Find(CurrentBoss);
             _TheBoss_1 = GameObject.Find(CurrentBoss_1);
             yield return new WaitForSeconds(0.5f);
 
             do
             {
-                //Modding.Logger.Log("[Easier-Ascended]: Waiting for: " + CurrentBoss + " and " + CurrentBoss_1);
                 _TheBoss = GameObject.Find(CurrentBoss);
                 _TheBoss_1 = GameObject.Find(CurrentBoss_1);
                 yield return new WaitForSeconds(1.0f);
             }
             while (_TheBoss == null || _TheBoss_1 == null);
-            Modding.Logger.Log("[Easier-Ascended]: Altered The Bosses: " + CurrentBoss + " and " + CurrentBoss_1);
+            EasierAscended.Instance.Log("Altered The Bosses: " + CurrentBoss + " and " + CurrentBoss_1);
 
             _TheBoss.AddComponent<BossNerf>();
             _TheBoss_1.AddComponent<HealthNerfOnly>();//only nerfs health
@@ -156,7 +151,6 @@ namespace Easier_Ascended
             CurrentBoss_1 = "Mantis Lord S1";
             CurrentBoss_2 = "Mantis Lord S2";
             CurrentBoss_3 = "Mantis Lord S3";
-            //Modding.Logger.Log("[Easier-Ascended]: Altering Boss");
 
             _TheBoss = GameObject.Find(CurrentBoss);
             yield return new WaitForSeconds(0.5f);
@@ -164,12 +158,11 @@ namespace Easier_Ascended
             do
             {
                 _TheBoss = GameObject.Find(CurrentBoss);
-                //Modding.Logger.Log("[Easier-Ascended]: Waiting for: " + CurrentBoss);
                 yield return new WaitForSeconds(0.5f);
             }
             while (_TheBoss == null);
 
-            Modding.Logger.Log("[Easier-Ascended]: Altered The Boss: " + CurrentBoss);
+            EasierAscended.Instance.Log("Altered The Boss: " + CurrentBoss);
             _TheBoss.AddComponent<BossNerf>();
 
             _TheBoss_1 =GameObject.Find(CurrentBoss_1);
@@ -200,7 +193,6 @@ namespace Easier_Ascended
             CurrentBoss_3 = "Black Knight 4";
             CurrentBoss_4 = "Black Knight 5";
             CurrentBoss_5 = "Black Knight 6";
-            //Modding.Logger.Log("[Easier-Ascended]: Altering Boss");
 
             _TheBoss = GameObject.Find(CurrentBoss);
             yield return new WaitForSeconds(0.5f);
@@ -208,17 +200,14 @@ namespace Easier_Ascended
             do
             {
                 _TheBoss = GameObject.Find(CurrentBoss);
-                //Modding.Logger.Log("[Easier-Ascended]: The Boss is: " + CurrentBoss);
-                //Modding.Logger.Log("[Easier-Ascended]: Waiting");
                 yield return new WaitForSeconds(0.5f);
             }
             while (_TheBoss == null);
 
-            Modding.Logger.Log("[Easier-Ascended]: Altered The Boss: " + CurrentBoss);
+            EasierAscended.Instance.Log("Altered The Boss: " + CurrentBoss);
             _TheBoss.AddComponent<BossNerf>();
             yield return new WaitForSeconds(0.5f);
 
-            //Modding.Logger.Log("[Easier-Ascended]: Starting to attempt");
 
             _TheBoss_1 = GameObject.Find(CurrentBoss_1);//unlike SOB, the knights do exist before their turn comes
             _TheBoss_2 = GameObject.Find(CurrentBoss_2);
@@ -235,10 +224,12 @@ namespace Easier_Ascended
 
         public static int Only1Damage(int damage)//does the p5 damage and fixes lifeblood issue
         {
-            if (damage == 1) return 1; //makes it atleast playable in attuned
+            if (damage == 1) return 1; //this is there so if they forget to turn it off, its atleast playable in attuned mode
+
+            if (EasierAscended.radiant) return 1000;
+
             current_blue_masks = PlayerData.instance.healthBlue;
             damage_to_be_dealt = damage / 2;
-            //Modding.Logger.Log(damage + " became " + damage_to_be_dealt + " damage");
 
             if (current_blue_masks > 0)//fixes the lifeblood bug in hk 
             {

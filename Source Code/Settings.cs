@@ -7,5 +7,6 @@ namespace Easier_Ascended
         public int remove_health = 0;
         public int lifeblood = 0;
         public int soul = 0;
+        public bool hitless_practice = false;
     } 
 }
