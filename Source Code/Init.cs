@@ -12,7 +12,7 @@ namespace Easier_Ascended
 
         internal static EasierAscended Instance;
 
-        public EasierAscended() : base("Easier Ascended") { }//Mod name on top left
+        public EasierAscended() : base("Better P5 Practice") { }//Mod name on top left
         public override string GetVersion() => Assembly.GetExecutingAssembly().GetName().Version.ToString();//cuz im lazy to increment it myself
         public GlobalModSettings _globalSettings = new GlobalModSettings(); //get the settings from settings file
 

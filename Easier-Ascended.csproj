@@ -7,8 +7,8 @@
     <ProjectGuid>{C5D7E0F7-9362-4323-8320-07A0950CAF9F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Easier_Ascended</RootNamespace>
-    <AssemblyName>Easier-Ascended</AssemblyName>
+    <RootNamespace>Better_P5_Practice</RootNamespace>
+    <AssemblyName>Bettter-P5-Practice</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
