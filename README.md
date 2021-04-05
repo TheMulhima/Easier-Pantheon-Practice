@@ -7,7 +7,7 @@ A mod that allows practice for P5 in HoG. This mod changes the health and damage
 - It can be used to practice specific bosses in P5 such as **Markoth**.
 - The remove health and add lifeblood features can be used for practicing **Fury Strats**.
 - It is compatible with Toggleable bindings which allows practice for P5 AB bosses such as **AB Collector**.
-- The hitless option allows practice for hitless P5. Why use this over radiant? Because the health in radiant doesn't match the health in P5 (but it does with this mod ). 
+- The hitless option allows practice for hitless P5. Why use this over radiant? Because the health in radiant doesn't match the health in P5 (but it does with this mod). 
 
 ## Examples of Using the Extra Features
 - The remove health can be set to a low value like 2-3 to simulate a real fight in P5.
