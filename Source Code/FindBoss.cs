@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Modding;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using USceneManager = UnityEngine.SceneManagement.SceneManager;
 using UnityEngine;
@@ -15,7 +15,7 @@ namespace Easier_Ascended
         public static GameObject _TheBoss;                                                               //for bosses to be changed by the class BossNerf 
         public static GameObject _TheBoss_1, _TheBoss_2, _TheBoss_3, _TheBoss_4,_TheBoss_5;             //for bosses to be changed by the class HealthNerfOnly
         public static bool altered_1, altered_2, altered_3, altered_4, altered_5;                       //helps reuse the HealthNerfOnly class for SOB and WK
-
+        public static bool SOB = true;                                                                  //to help wih Mantis Lords
 
         Dictionary<string, string> _BossSceneName = new Dictionary<string, string>()
         {
@@ -49,11 +49,12 @@ namespace Easier_Ascended
             {"GG_White_Defender", "White Defender"},                    
             {"GG_Ghost_Markoth_V", "Ghost Warrior Markoth"},
             {"GG_Grey_Prince_Zote", "Grey Prince"},
-            {"GG_Failed_Champion", "False Knight Dream" },              
-            {"GG_Radiance", "Absolute Radiance"},
+            {"GG_Failed_Champion", "False Knight Dream"},
+            {"GG_Grimm_Nightmare", "Nightmare Grimm Boss"},
             {"GG_Hollow_Knight", "HK Prime"},
-            {"GG_Grimm_Nightmare", "Nightmare Grimm Boss"}
-        };//dict for boss scenes and boss names
+            {"GG_Radiance", "Absolute Radiance"},
+            {"GG_Nosk", "Nosk"}//not in P5 but added it for the sake of completion
+        };
 
         List<string> Exceptions_BossSceneName = new List<string>()//list for all the exceptions
         {
@@ -65,6 +66,7 @@ namespace Easier_Ascended
             "GG_God_Tamer",
             "GG_Watcher_Knights",
             "GG_Soul_Tyrant",
+            "GG_Mantis_Lords",//not in P5 but added it for the sake of completion
         };
 
         private void Start()
@@ -82,6 +84,7 @@ namespace Easier_Ascended
                 {
                     ModHooks.Instance.TakeHealthHook += Only1Damage;
                     altered_1 = altered_2 = altered_3 = altered_4 = altered_5 = false;
+                    SOB = true;//to help wih Mantis Lords
                 }
             }
             if ((Exceptions_BossSceneName.Contains(arg0.name) || _BossSceneName.ContainsKey(arg0.name))) ModHooks.Instance.TakeHealthHook -= Only1Damage;//removes the Only1Damage to make sure the half damage doesnt stack
@@ -94,7 +97,8 @@ namespace Easier_Ascended
                 if (arg1.name == "GG_God_Tamer") StartCoroutine(_2BossException("Lancer","Lobster"));                        
                 if (arg1.name == "GG_Soul_Tyrant") StartCoroutine(_2BossException("Dream Mage Lord", "Dream Mage Lord Phase2"));                        
                 if (arg1.name == "GG_Nailmasters") StartCoroutine(_2BossException("Oro", "Mato"));
-                if (arg1.name == "GG_Mantis_Lords_V") StartCoroutine(SistersOfBattle());                        
+                if (arg1.name == "GG_Mantis_Lords_V") StartCoroutine(SistersOfBattle(true));
+                if (arg1.name == "GG_Mantis_Lords") StartCoroutine(SistersOfBattle(false));
                 if (arg1.name == "GG_Watcher_Knights") StartCoroutine(WatcherKnight());
             }
             else if (_BossSceneName.ContainsKey(arg1.name))
@@ -143,14 +147,13 @@ namespace Easier_Ascended
             _TheBoss.AddComponent<BossNerf>();
             _TheBoss_1.AddComponent<HealthNerfOnly>();//only nerfs health
         }
-
-        private IEnumerator SistersOfBattle()//function for SOB cuz there are 4 bosses in this one
+        private IEnumerator SistersOfBattle(bool isSOB)//function for SOB cuz there are 4 bosses in this one
         {
-            
+            SOB = isSOB;
             CurrentBoss = "Mantis Lord";
             CurrentBoss_1 = "Mantis Lord S1";
             CurrentBoss_2 = "Mantis Lord S2";
-            CurrentBoss_3 = "Mantis Lord S3";
+            if (SOB) CurrentBoss_3 = "Mantis Lord S3";
 
             _TheBoss = GameObject.Find(CurrentBoss);
             yield return new WaitForSeconds(0.5f);
@@ -165,28 +168,43 @@ namespace Easier_Ascended
             EasierAscended.Instance.Log("Altered The Boss: " + CurrentBoss);
             _TheBoss.AddComponent<BossNerf>();
 
-            _TheBoss_1 =GameObject.Find(CurrentBoss_1);
+            _TheBoss_1 = GameObject.Find(CurrentBoss_1);
             _TheBoss_2 = GameObject.Find(CurrentBoss_2);
-            _TheBoss_3 =GameObject.Find(CurrentBoss_3);
+            if (SOB) _TheBoss_3 = GameObject.Find(CurrentBoss_3);
 
-            while (_TheBoss_1 == null || _TheBoss_2 == null || _TheBoss_3 == null)//The lords dont exist before the 1st one dies
-            { 
-                _TheBoss_1 = GameObject.Find("Mantis Lord S1");
-                if (_TheBoss_1 != null) _TheBoss_1.AddComponent<HealthNerfOnly>();
-                    
-                _TheBoss_2 = GameObject.Find("Mantis Lord S2");
-                if (_TheBoss_2 != null) _TheBoss_2.AddComponent<HealthNerfOnly>();
-                
-                _TheBoss_3 = GameObject.Find("Mantis Lord S3");
-                if (_TheBoss_3 != null) _TheBoss_3.AddComponent<HealthNerfOnly>();
+            if (SOB)
+            {
+                while (_TheBoss_1 == null || _TheBoss_2 == null || _TheBoss_3 == null)//The lords dont exist before the 1st one dies
+                {
+                    _TheBoss_1 = GameObject.Find("Mantis Lord S1");
+                    if (_TheBoss_1 != null) _TheBoss_1.AddComponent<HealthNerfOnly>();
 
-                yield return new WaitForSeconds(0.5f);
+                    _TheBoss_2 = GameObject.Find("Mantis Lord S2");
+                    if (_TheBoss_2 != null) _TheBoss_2.AddComponent<HealthNerfOnly>();
+
+                    _TheBoss_3 = GameObject.Find("Mantis Lord S3");
+                    if (_TheBoss_3 != null) _TheBoss_3.AddComponent<HealthNerfOnly>();
+
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+            else if (!SOB)
+            {
+                while (_TheBoss_1 == null || _TheBoss_2 == null)//The lords dont exist before the 1st one dies
+                {
+                    _TheBoss_1 = GameObject.Find("Mantis Lord S1");
+                    if (_TheBoss_1 != null) _TheBoss_1.AddComponent<HealthNerfOnly>();
+
+                    _TheBoss_2 = GameObject.Find("Mantis Lord S2");
+                    if (_TheBoss_2 != null) _TheBoss_2.AddComponent<HealthNerfOnly>();
+
+                    yield return new WaitForSeconds(0.5f);
+                }
             }
         }
 
         private IEnumerator WatcherKnight()
         {
-            
             CurrentBoss = "Black Knight 1";
             CurrentBoss_1 = "Black Knight 2";
             CurrentBoss_2 = "Black Knight 3";

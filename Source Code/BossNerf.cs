@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
-using ModCommon.Util;
-using HutongGames.PlayMaker.Actions;
+using System.Collections.Generic;
 
 namespace Easier_Ascended
 {
@@ -11,7 +9,8 @@ namespace Easier_Ascended
         private PlayMakerFSM _control;
 
         Dictionary<string, int> _BossHealth = new Dictionary<string, int>()//dict for boss healths
-        { { "Giant Buzzer Col", 190 },
+        { 
+            { "Giant Buzzer Col", 190 },
             { "Giant Fly", 650 },
             { "False Knight New", 260 },
             { "Mega Moss Charger", 9999 },//actual hp is 480. i did it for the trolls
@@ -24,7 +23,7 @@ namespace Easier_Ascended
             { "Ghost Warrior Xero", 650 },
             { "Mega Zombie Beam Miner (1)", 650 },
             { "Mage Lord", 600 },
-            {" Mega Fat Bee",450 },
+            { "Mega Fat Bee",450 },
             { "Mantis Lord", 500 },
             { "Ghost Warrior Marmu", 416 },
             { "Fluke Mother", 500 },
@@ -39,6 +38,7 @@ namespace Easier_Ascended
             { "Black Knight 1", 350 },
             { "Mega Jellyfish GG", 350 },
             { "Hornet Nosk", 750 },
+            { "Nosk", 680 },
             { "Sly Boss", 800 },
             { "Hornet Boss 2", 800 },
             { "Zombie Beam Miner Rematch", 650 },
@@ -49,7 +49,7 @@ namespace Easier_Ascended
             { "Dream Mage Lord", 900 },
             { "Ghost Warrior Markoth", 650 },
             { "Grey Prince", 1400 },
-            {"False Knight Dream",360 },
+            { "False Knight Dream",360 },
             { "Nightmare Grimm Boss", 1250 },
             { "HK Prime", 1600 },
             { "Absolute Radiance", 3000 },
@@ -67,14 +67,15 @@ namespace Easier_Ascended
             health.hp = _BossHealth[FindBoss.CurrentBoss];
             EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss + "\" changed to: " + health.hp);
 
+            if (!FindBoss.SOB) health.hp = 400;
+
             ChangeFSM();//some bosses' phase change/health doesnt occur correctly hence requies changing them by editting FSMs
         }
 
         private void ApplySettings()
         {
-            if (!EasierAscended.radiant)
+            if (!EasierAscended.radiant)//done only if hitless option is turned off
             {
-                //done only if hitless option is turned off
                 EasierAscended.Instance.Log("Applying Damage Setting");
                 if (EasierAscended.DoDamage > 1) HeroController.instance.TakeHealth(EasierAscended.DoDamage); ;//doing this allows the player to move during the boss scream. so its bext to check and only do it if it is required
 
@@ -165,7 +166,6 @@ namespace Easier_Ascended
     {
         private HealthManager health;
         
-
         Dictionary<string, int> Exceptions_BossHealth = new Dictionary<string, int>()
         {
             { "Giant Buzzer Col (1)", 450 },
@@ -184,13 +184,13 @@ namespace Easier_Ascended
             { "Black Knight 6", 350 }
         };
 
+        int p2_mantis_lords_health = 350;//this is different because SOB and the mantis lord fight have same gameobject names but different health
         private void Awake()
         {
             health = gameObject.GetComponent<HealthManager>();
         }
         private void Start()
-        {
-            //EasierAscended.Instance.Log(FindBoss.CurrentBoss_1 +": "+ health.hp);
+        { 
             if (FindBoss.altered_1 == false)//this if condition helps reuse this class for SOB and WK
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_1];
@@ -221,6 +221,9 @@ namespace Easier_Ascended
                 FindBoss.altered_5 = true;
                 EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_5 + "\" changed to: " + health.hp);
             }
+
+            if (!FindBoss.SOB) health.hp = p2_mantis_lords_health;//sets the health of the 2 lords in mantis lord fight
+
         }
     }
 }
