@@ -18,12 +18,13 @@ A mod that allows practice for P5 in HoG. This mod changes the health and damage
 
 ## How to Use:
 - Download the mod and open any existing save file. If you want to use it with a new save file, make one and then reload it.
-- To remove health, add lifeblood or add soul before each fight, open the save file location and edit the values in EasierAscended.GlobalSettings.json. **Note**: Soul should be added in multiples of 33 or 24 (if using soul twister) to be able to use any spells.
+- To remove health, add lifeblood or add soul before each fight, open the save file location and edit the values in EasierAscended.GlobalSettings.json. **Note**: Soul should be added in multiples of 33 or 24 (if using soul twister) to be able to use any spells. 
 
 ## Other:
 - The mod only works in Hall of Gods and doesn't affect pantheons or other areas of the game.
 - With this mod, the double damage **Attuned Bosses** in HoG won't work properly. If you want to practice in attuned, turn off this mod in the game settings.
 - The mod affects bosses of health. Needless to say, it shouldn't be used with other modded boss. If you do want to, turn this mod off in the game settings.
+- The soul added won't show up in the HUD until soul is lost or gained. But that doesnt mean it can't be used. so if you added soul and don't see, trust me its there and can be used.
 - If you find any bugs or have any suggestions, you can message me on discord at Mulhima#2695.
 
 ## Dependancies:
