@@ -1,4 +1,4 @@
-# Easier_Ascended
+# Better P5 Practice
 
 ## Description:
 A mod that allows practice for P5 in HoG. This mod changes the health and damage of ascended bosses to match with P5 and adds the ability to remove health (for fury practice) and add soul or lifeblood before each fight starts. Also add an option for hitless practice.
@@ -28,7 +28,7 @@ A mod that allows practice for P5 in HoG. This mod changes the health and damage
 - If you find any bugs or have any suggestions, you can message me on discord at Mulhima#2695.
 
 ## Dependancies:
-- The only dependancy is Mod Common and the Modding API (obviously).
+- This mod has no dependancies (other than the Modding API obviously).
 
 ## Credits
 - Thank you to everyone in #modding-development for helping me make this mod and also for having open source code for me to read. This mod was heavily influcenced by the mods Pale Prince by fifty-six, Mantis Gods by fifty-six and Buzzbo by thegodfriend.
