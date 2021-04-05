@@ -12,7 +12,7 @@ A mod that allows practice for P5 in HoG. This mod changes the health and damage
 ## Examples of Using the Extra Features
 - The remove health can be set to a low value like 2-3 to simulate a real fight in P5.
 - The remove health can be set to max health - 1 (so 8) to trigger fury of the fallen as soon as the fight starts to help practice with fury (the add lifeblood can be used to make it more easier to practice).
-- The add lifeblood can be used to give more leniency and make practicing eaier.
+- The add lifeblood can be used to give more leniency and make practicing easier.
 - Add soul can be used to start the fight off with soul to simulate a real fight in p5.
 - The hitless option allows you to get insta killed to practice hitless bosses. 
 
