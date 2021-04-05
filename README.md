@@ -1,7 +1,7 @@
 # Better P5 Practice
 
 ## Description:
-A mod that allows practice for P5 in HoG. This mod changes the health and damage of ascended bosses to match with P5 and adds the ability to remove health (for fury practice) and add soul or lifeblood before each fight starts. Also add an option for hitless practice.
+A mod that allows practice for P5 in HoG. This mod changes the health and damage of ascended bosses to match with P5 and adds the ability to remove health (for fury practice), add soul or lifeblood before each fight starts and an option for hitless practice.
   
 ## Why Would I use this?:
 - It can be used to practice specific bosses in P5 such as **Markoth**.
@@ -17,6 +17,7 @@ A mod that allows practice for P5 in HoG. This mod changes the health and damage
 - The hitless option allows you to get insta killed to practice hitless bosses. 
 
 ## How to Use:
+- To use the mod, fight the ascended version of the boss.
 - Download the mod and open any existing save file. If you want to use it with a new save file, make one and then reload it.
 - To remove health, add lifeblood or add soul before each fight, open the save file location and edit the values in EasierAscended.GlobalSettings.json. **Note**: Soul should be added in multiples of 33 or 24 (if using soul twister) to be able to use any spells. 
 
