@@ -32,5 +32,5 @@ A mod that allows practice for P5 in HoG. This mod changes the health and damage
 - This mod has no dependancies (other than the Modding API obviously).
 
 ## Credits
-- Thank you to everyone in #modding-development for helping me make this mod and also for having open source code for me to read. This mod was heavily influcenced by the mods [Pale Prince by fifty-six](https://github.com/fifty-six/HollowKnight.Pale-Prince), Mantis Gods by fifty-six and Buzzbo by thegodfriend.
+- Thank you to everyone in #modding-development for helping me make this mod and also for having open source code for me to read. This mod was heavily influcenced by the mods: [Pale Prince](https://github.com/fifty-six/HollowKnight.Pale-Prince) by [fifty-six](https://github.com/fifty-six), [Mantis Gods](https://github.com/fifty-six/HollowKnight.Mantis-Gods) by [fifty-six](https://github.com/fifty-six), and [Buzzbo](https://github.com/thegodfriend/buzzbo) by [thegodfriend](https://github.com/thegodfriend).
 
