@@ -12,7 +12,7 @@ namespace Easier_Ascended
 
         internal static EasierAscended Instance;
 
-        public EasierAscended() : base("Better P5 Practice") { }//Mod name on top left
+        public EasierAscended() : base("Easier P5 Practice") { }//Mod name on top left
         public override string GetVersion() => Assembly.GetExecutingAssembly().GetName().Version.ToString();//cuz im lazy to increment it myself
         public GlobalModSettings _globalSettings = new GlobalModSettings(); //get the settings from settings file
 
@@ -40,38 +40,43 @@ namespace Easier_Ascended
             ModHooks.Instance.NewGameHook += New_Game_Easier_Ascended; 
             ModHooks.Instance.LanguageGetHook += BossDesc;
         }
-        
+
         public string BossDesc(string key, string sheet)
-        { 
-            if (key == "CHALLENGE_UI_LEVEL2") return "P5 PRACTICE";
+        {
+            switch (key)
+            {
+                case "CHALLENGE_UI_LEVEL2": return "P5 PRACTICE";
 
-            #region //for the trolls
-            if (key == "NAME_MEGA_MOSS_CHARGER") return "UNKILLABLE MOSS CHARGER";
-            if (key == "GG_S_MEGAMOSS") return "The True Champion of the Gods. Try as hard as you want, you can not kill it";
-            if (key == "MEGA_MOSS_SUPER") return "UNKILLABLE";
-            if (key == "MEGA_MOSS_SUB") return "THE TRUE CHAMPION OF THE GODS";
+                #region for the trolls
+                case "NAME_MEGA_MOSS_CHARGER": return "UNKILLABLE MOSS CHARGER";
+                case "GG_S_MEGAMOSS": return "The True Champion of the Gods. Try as hard as you want, you can not kill it";
+                case "MEGA_MOSS_SUPER": return "UNKILLABLE";
+                case "MEGA_MOSS_SUB": return "THE TRUE CHAMPION OF THE GODS";
 
-            if (key == "GG_S_GRUZ") return "My head hurts. Please dont make me slam my head again";
-            if (key == "GG_S_BIGBUZZ") return "Vicious God of running away";
-            if (key == "GG_S_FLUKEMUM") return "Alluring God of standing still";
-            if (key == "GG_S_BIGBEES") return "Gods of RNG";
-            if (key == "GG_S_NOSK_HORNET") return "Vicious God of running away, but worse";
-            if (key == "GG_S_COLLECTOR") return "The boss that gives nightmares to All Binding players";
-            if (key == "GG_S_MIGHTYZOTE") return "I like giving ear aches";
-            if (key == "KNIGHT_STATUE_1"|| key == "KNIGHT_STATUE_2"|| key == "KNIGHT_STATUE_3") return "Did you really just spend all these hours grinding just to get this??";
-            if (key == "GG_S_RADIANCE") return "I'm the god of light and you insult me by refering to me as a tiny moth??";
-            if (key == "GG_S_SLY") return "Bug Yoda";
-            if (key == "GG_S_GHOST_HU") return "I love PANCAKES";
-            if (key == "GG_S_GHOST_GORB") return "Ascend with Gorb";
-            if (key == "GG_S_SOULMASTER") return "Teleporting freak";
-            if (key == "GG_S_SOUL_TYRANT") return "Teleporting freak v2";
-            if (key == "GG_S_MAGEKNIGHT") return "Am i really a boss?";
-            if (key == "UI_CHALLENGE_DESC_5") return "After all this practice, are you finally ready?";
-            if (key == "UI_BEGIN") return "Let My Suffering Begin";
-            if (key == "CHARM_NAME_2") return "OP Compass";
-            if (key == "CHARM_DESC_2") return "Its the most OP charm in the game.<br><br>Wear this charm to get good";
-
-            #endregion
+                case "GG_S_GRUZ": return "My head hurts. Please dont make me slam my head again";
+                case "GG_S_BIGBUZZ": return "Vicious God of running away";
+                case "GG_S_FLUKEMUM": return "Alluring God of standing still";
+                case "GG_S_BIGBEES": return "Gods of RNG";
+                case "GG_S_NOSK_HORNET": return "Vicious God of running away, but worse";
+                case "GG_S_COLLECTOR": return "The boss that gives nightmares to All Binding players";
+                case "GG_S_MIGHTYZOTE": return "I like giving ear aches";
+                case "KNIGHT_STATUE_1": return "Did you really just spend all these hours grinding just to get this??";
+                case "KNIGHT_STATUE_2": return "Did you really just spend all these hours grinding just to get this??";
+                case "KNIGHT_STATUE_3": return "Did you really just spend all these hours grinding just to get this??";
+                case "GG_S_RADIANCE": return "I'm the god of light and you insult me by refering to me as a tiny moth??";
+                case "GG_S_SLY": return "Bug Yoda";
+                case "GG_S_GHOST_HU": return "I love PANCAKES";
+                case "GG_S_GHOST_GORB": return "Ascend with Gorb";
+                case "GG_S_SOULMASTER": return "Teleporting freak";
+                case "GG_S_SOUL_TYRANT": return "Teleporting freak v2";
+                case "GG_S_MAGEKNIGHT": return "Am i really a boss?";
+                case "UI_CHALLENGE_DESC_5": return "After all this practice, are you finally ready?";
+                case "UI_BEGIN": return "I'm Ready";
+                case "CHARM_NAME_2": return "OP Compass";
+                case "CHARM_DESC_2": return "Its the most OP charm in the game.<br><br>Wear this charm to get good";
+                #endregion
+        }
+            
 
             return Language.Language.GetInternal(key, sheet);
         }

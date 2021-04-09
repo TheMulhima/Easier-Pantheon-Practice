@@ -77,15 +77,14 @@ namespace Easier_Ascended
         private void SceneChanged(Scene arg0, Scene arg1)
         {
             if (EasierAscended._unloaded) return;//helps keep mod toggleable
+            if (arg0.name != "GG_Workshop") return;
 
-            if (arg0.name == "GG_Workshop")//makes sure the mod isnt triggered when playing pantheons
+            if (Exceptions_BossSceneName.Contains(arg1.name) || _BossSceneName.ContainsKey(arg1.name))
             {
-                if (Exceptions_BossSceneName.Contains(arg1.name) || _BossSceneName.ContainsKey(arg1.name))
-                {
-                    ModHooks.Instance.TakeHealthHook += Only1Damage;
-                    altered_1 = altered_2 = altered_3 = altered_4 = altered_5 = false;
-                    SOB = true;//to help wih Mantis Lords
-                }
+                if (BossSceneController.Instance.BossLevel != 1) return;
+                ModHooks.Instance.TakeHealthHook += Only1Damage;
+                altered_1 = altered_2 = altered_3 = altered_4 = altered_5 = false;
+                SOB = true;//to help wih Mantis Lords
             }
             if ((Exceptions_BossSceneName.Contains(arg0.name) || _BossSceneName.ContainsKey(arg0.name))) ModHooks.Instance.TakeHealthHook -= Only1Damage;//removes the Only1Damage to make sure the half damage doesnt stack
             
@@ -242,8 +241,6 @@ namespace Easier_Ascended
 
         public static int Only1Damage(int damage)//does the p5 damage and fixes lifeblood issue
         {
-            if (damage == 1) return 1; //this is there so if they forget to turn it off, its atleast playable in attuned mode
-
             if (EasierAscended.radiant) return 1000;
 
             current_blue_masks = PlayerData.instance.healthBlue;
