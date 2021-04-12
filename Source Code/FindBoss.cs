@@ -53,7 +53,20 @@ namespace Easier_Ascended
             {"GG_Grimm_Nightmare", "Nightmare Grimm Boss"},
             {"GG_Hollow_Knight", "HK Prime"},
             {"GG_Radiance", "Absolute Radiance"},
-            {"GG_Nosk", "Nosk"}//not in P5 but added it for the sake of completion
+
+            {"GG_Nosk", "Nosk"},
+            {"GG_Nosk_V", "Nosk"},
+            {"GG_Vengefly","Giant Buzzer Col"},
+            {"GG_Gruz_Mother", "Giant Fly"},
+            {"GG_Ghost_Gorb", "Ghost Warrior Slug"},
+            {"GG_Mage_Knight", "Mage Knight"},
+            {"GG_Brooding_Mawlek", "Mawlek Body"},
+            {"GG_Ghost_Xero", "Ghost Warrior Xero"},
+            {"GG_Ghost_Marmu", "Ghost Warrior Marmu"},
+            {"GG_Collector", "Jar Collector"},
+            {"GG_Uumuu", "Mega Jellyfish GG"},
+            {"GG_Ghost_No_Eyes", "Ghost Warrior No Eyes"},
+            {"GG_Ghost_Markoth", "Ghost Warrior Markoth"},
         };
 
         List<string> Exceptions_BossSceneName = new List<string>()//list for all the exceptions
@@ -81,7 +94,6 @@ namespace Easier_Ascended
 
             if (Exceptions_BossSceneName.Contains(arg1.name) || _BossSceneName.ContainsKey(arg1.name))
             {
-                if (BossSceneController.Instance.BossLevel != 1) return;
                 ModHooks.Instance.TakeHealthHook += Only1Damage;
                 altered_1 = altered_2 = altered_3 = altered_4 = altered_5 = false;
                 SOB = true;//to help wih Mantis Lords
@@ -242,9 +254,9 @@ namespace Easier_Ascended
         public static int Only1Damage(int damage)//does the p5 damage and fixes lifeblood issue
         {
             if (EasierAscended.radiant) return 1000;
-
             current_blue_masks = PlayerData.instance.healthBlue;
-            damage_to_be_dealt = damage / 2;
+            if (BossSceneController.Instance.BossLevel == 0) damage_to_be_dealt = damage;
+            if (BossSceneController.Instance.BossLevel == 1) damage_to_be_dealt = damage / 2;
 
             if (current_blue_masks > 0)//fixes the lifeblood bug in hk 
             {

@@ -10,10 +10,10 @@ namespace Easier_Ascended
 
         Dictionary<string, int> _BossHealth = new Dictionary<string, int>()//dict for boss healths
         { 
-            { "Giant Buzzer Col", 190 },
+            { "Giant Buzzer Col", 450 },
             { "Giant Fly", 650 },
             { "False Knight New", 260 },
-            { "Mega Moss Charger", 9999 },//actual hp is 480. i did it for the trolls
+            { "Mega Moss Charger", 480 },
             { "Hornet Boss 1", 900 },
             { "Ghost Warrior Slug", 650 },
             { "Dung Defender", 800 },
@@ -77,7 +77,11 @@ namespace Easier_Ascended
             if (!EasierAscended.radiant)//done only if hitless option is turned off
             {
                 EasierAscended.Instance.Log("Applying Damage Setting");
-                if (EasierAscended.DoDamage > 1) HeroController.instance.TakeHealth(EasierAscended.DoDamage); ;//doing this allows the player to move during the boss scream. so its bext to check and only do it if it is required
+                if (EasierAscended.DoDamage > 1)//doing this allows the player to move during the boss scream. so its bext to check and only do it if it is required
+                {
+                    if (BossSceneController.Instance.BossLevel == 0) HeroController.instance.TakeHealth(EasierAscended.DoDamage);
+                    if (BossSceneController.Instance.BossLevel == 1) HeroController.instance.TakeHealth(2* EasierAscended.DoDamage);
+                }
 
                 EasierAscended.Instance.Log("Applying Lifeblood Setting");
                 for (int lifeblood_increment = 0; lifeblood_increment < EasierAscended.AddBlueMasks; lifeblood_increment++) EventRegister.SendEvent("ADD BLUE HEALTH");//playerdata.instance.bluehealth doesnt update lifeblood on HUD
@@ -98,7 +102,7 @@ namespace Easier_Ascended
             else if (FindBoss.CurrentBoss == "Sly Boss") Sly();
             else if (FindBoss.CurrentBoss == "False Knight Dream") FailedChampion();
             else if (FindBoss.CurrentBoss == "False Knight New") FalseKnight();
-            else if (FindBoss.CurrentBoss == "Mega Moss Charger") MMC();
+            //else if (FindBoss.CurrentBoss == "Mega Moss Charger") MMC();
         }
         private void PV()
         {
@@ -168,7 +172,7 @@ namespace Easier_Ascended
         
         Dictionary<string, int> Exceptions_BossHealth = new Dictionary<string, int>()
         {
-            { "Giant Buzzer Col (1)", 450 },
+            { "Giant Buzzer Col (1)", 190 },
             { "Dream Mage Lord Phase2", 350 },
             { "Lobster", 750 },
             { "Mega Fat Bee (1)", 450 },

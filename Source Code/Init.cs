@@ -31,7 +31,7 @@ namespace Easier_Ascended
             //intilises the variables so it can be used by other classes
             _unloaded = false;//to make sure the mod is toggleable
 
-            DoDamage = 2 * _globalSettings.remove_health; //x2 becuase the function is called after Only1Damage is called
+            DoDamage = _globalSettings.remove_health; //x2 becuase the function is called after Only1Damage is called
             AddBlueMasks = _globalSettings.lifeblood;
             AddSoul = _globalSettings.soul;
             radiant = _globalSettings.hitless_practice;
