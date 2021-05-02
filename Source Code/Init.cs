@@ -1,42 +1,53 @@
 ﻿using Modding;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
-namespace Easier_Ascended
+namespace Easier_Pantheon_Practice
 {
-    public class EasierAscended : Mod, ITogglableMod
+    public class EasierPantheonPractice : Mod, ITogglableMod
     {
-        //stores them like this so it can be acessed by the other classes
-        public static int DoDamage, AddBlueMasks, AddSoul;
-        public static bool radiant,_unloaded;
 
-        internal static EasierAscended Instance;
+        public static bool _unloaded;
 
-        public EasierAscended() : base("Easier P5 Practice") { }//Mod name on top left
+        internal static EasierPantheonPractice Instance;
+
+        public EasierPantheonPractice() : base("Easier P5 Practice") { }//Mod name on top left
         public override string GetVersion() => Assembly.GetExecutingAssembly().GetName().Version.ToString();//cuz im lazy to increment it myself
-        public GlobalModSettings _globalSettings = new GlobalModSettings(); //get the settings from settings file
+        public GlobalModSettings settings = new GlobalModSettings(); //get the settings from settings file
 
         public override ModSettings GlobalSettings
         {
-            get => _globalSettings;
-            set => _globalSettings = (GlobalModSettings) value;
+            get => settings;
+            set => settings = (GlobalModSettings) value;
         }
-        public override void Initialize()
+        public override List<(string, string)> GetPreloadNames()
         {
-
+            return new List<(string, string)>
+            {
+                ("GG_Workshop", "GG_Statue_Hornet/Inspect"),
+                ("GG_Hollow_Knight", "Boss Scene Controller/Dream Entry")
+            };
+        }
+        public static Dictionary<string, GameObject> PreloadedObjects = new Dictionary<string, GameObject>();
+        public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
+        {
+            PreloadedObjects.Add("Inspect", preloadedObjects["GG_Workshop"]["GG_Statue_Hornet/Inspect"]);
+            PreloadedObjects.Add("Entry", preloadedObjects["GG_Hollow_Knight"]["Boss Scene Controller/Dream Entry"]);
             Instance = this;
 
             Log("Easier Ascended Mod Initialized");
 
-            //intilises the variables so it can be used by other classes
-            _unloaded = false;//to make sure the mod is toggleable
+            
+            _unloaded = false;
+            
+            
 
-            DoDamage = _globalSettings.remove_health; //x2 becuase the function is called after Only1Damage is called
-            AddBlueMasks = _globalSettings.lifeblood;
-            AddSoul = _globalSettings.soul;
-            radiant = _globalSettings.hitless_practice;
 
-            ModHooks.Instance.AfterSavegameLoadHook += Load_Easier_Ascended;//loads mod when save game is loaded
+
+
+            ModHooks.Instance.AfterSavegameLoadHook += Load_Easier_Ascended;
             ModHooks.Instance.NewGameHook += New_Game_Easier_Ascended; 
             ModHooks.Instance.LanguageGetHook += BossDesc;
         }
@@ -75,9 +86,8 @@ namespace Easier_Ascended
                 case "CHARM_NAME_2": return "OP Compass";
                 case "CHARM_DESC_2": return "Its the most OP charm in the game.<br><br>Wear this charm to get good";
                 #endregion
-        }
+            }
             
-
             return Language.Language.GetInternal(key, sheet);
         }
 
@@ -90,11 +100,13 @@ namespace Easier_Ascended
             GameManager.instance.gameObject.AddComponent<FindBoss>();
         }
 
-        public void Unload() //To allow it to toggle between on and off in the mods option in settings
+
+
+        public void Unload() 
         {
             ModHooks.Instance.AfterSavegameLoadHook -= Load_Easier_Ascended;
+            ModHooks.Instance.NewGameHook -= New_Game_Easier_Ascended; 
             ModHooks.Instance.LanguageGetHook -= BossDesc;
-            _unloaded = true;
         }
     }
 }

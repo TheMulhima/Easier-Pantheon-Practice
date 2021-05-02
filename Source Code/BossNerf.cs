@@ -1,12 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Easier_Ascended
+namespace Easier_Pantheon_Practice
 {
     internal class BossNerf : MonoBehaviour
     {
         private HealthManager health;
         private PlayMakerFSM _control;
+
 
         Dictionary<string, int> _BossHealth = new Dictionary<string, int>()//dict for boss healths
         { 
@@ -55,42 +56,26 @@ namespace Easier_Ascended
             { "Absolute Radiance", 3000 },
         };
 
+
+
         private void Awake()
         {
             health = gameObject.GetComponent<HealthManager>();
         }
         private void Start()
         {
-            ApplySettings();
-
-            //changes the bosses health
+            
             health.hp = _BossHealth[FindBoss.CurrentBoss];
-            EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss + "\" changed to: " + health.hp);
 
             if (!FindBoss.SOB) health.hp = 400;
+            EasierPantheonPractice.Instance.Log($"Health of \" {FindBoss.CurrentBoss} \" was changed to: {health.hp}");
 
-            ChangeFSM();//some bosses' phase change/health doesnt occur correctly hence requies changing them by editting FSMs
+            ChangeFSM();
+            BossSceneController.Instance.BossLevel = 0;
         }
 
-        private void ApplySettings()
-        {
-            if (!EasierAscended.radiant)//done only if hitless option is turned off
-            {
-                EasierAscended.Instance.Log("Applying Damage Setting");
-                if (EasierAscended.DoDamage > 1)//doing this allows the player to move during the boss scream. so its bext to check and only do it if it is required
-                {
-                    if (BossSceneController.Instance.BossLevel == 0) HeroController.instance.TakeHealth(EasierAscended.DoDamage);
-                    if (BossSceneController.Instance.BossLevel == 1) HeroController.instance.TakeHealth(2* EasierAscended.DoDamage);
-                }
 
-                EasierAscended.Instance.Log("Applying Lifeblood Setting");
-                for (int lifeblood_increment = 0; lifeblood_increment < EasierAscended.AddBlueMasks; lifeblood_increment++) EventRegister.SendEvent("ADD BLUE HEALTH");//playerdata.instance.bluehealth doesnt update lifeblood on HUD
-            }
-
-            //done regardless of the option
-            EasierAscended.Instance.Log("Applying Soul Setting");
-            PlayerData.instance.AddMPCharge(EasierAscended.AddSoul);
-        }
+        #region //Changing FSMS
 
         private void ChangeFSM()
         {
@@ -106,20 +91,20 @@ namespace Easier_Ascended
         }
         private void PV()
         {
-            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierPantheonPractice.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Control");
             _control.Fsm.GetFsmInt("Half HP").Value = health.hp * 2/3;//WHY IS THIS NAMED HALF HP???
             _control.Fsm.GetFsmInt("Quarter HP").Value = health.hp * 1 / 3;//WHY IS THIS NAMED QUATER HP???
         }
         private void Collector()
         {
-            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierPantheonPractice.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Phase Control");
             _control.Fsm.GetFsmInt("Phase 2 HP").Value = 300;
         }
         private void Grimms()
         {
-            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierPantheonPractice.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Control");
             _control.Fsm.GetFsmInt("Rage HP 1").Value = health.hp * 3 / 4;
             _control.Fsm.GetFsmInt("Rage HP 2").Value = health.hp * 2 / 4;
@@ -127,31 +112,31 @@ namespace Easier_Ascended
         }
         private void NailMasters()
         {
-            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierPantheonPractice.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("nailmaster");
             _control.Fsm.GetFsmInt("P2 HP").Value = 600;
         }
         private void DungDefender()
         {
-            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierPantheonPractice.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Dung Defender");
             _control.Fsm.GetFsmInt("Rage HP").Value = 350;
         }
         private void Sly()
         {
-            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierPantheonPractice.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Control");
             _control.Fsm.GetFsmInt("Ascended HP").Value = 250;//WHY IS THIS NAMED ASCENDED HP IT LITERALLY MAKES NO SENSE!!
         }
         private void FailedChampion()
         {
-            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierPantheonPractice.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("FalseyControl");
             _control.Fsm.GetFsmInt("Recover HP").Value = 360;
         }
         private void FalseKnight()
         {
-            EasierAscended.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
+            EasierPantheonPractice.Instance.Log("Chaning FSM for" + FindBoss.CurrentBoss);
             _control = gameObject.LocateMyFSM("Check Health");//WHY DOES FK AND FC HAVE THEIR RECOVER HEALTH IN DIFFERENT FSMs
             _control.Fsm.GetFsmInt("Recover HP").Value = 260;
         }
@@ -163,6 +148,9 @@ namespace Easier_Ascended
             mmc.Fsm.GetFsmFloat("Accel").Value *= 10;
             mmc.Fsm.GetFsmFloat("Velocity").Value *= 10;
         }
+
+        #endregion
+
     }
 
 
@@ -199,31 +187,31 @@ namespace Easier_Ascended
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_1];
                 FindBoss.altered_1 = true;
-                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_1 + "\" changed to: " + health.hp);
+                EasierPantheonPractice.Instance.Log("Health of \"" + FindBoss.CurrentBoss_1 + "\" changed to: " + health.hp);
             }
             else if (FindBoss.altered_2 == false)
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_2];
                 FindBoss.altered_2 = true;
-                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_2 + "\" changed to: " + health.hp);
+                EasierPantheonPractice.Instance.Log("Health of \"" + FindBoss.CurrentBoss_2 + "\" changed to: " + health.hp);
             }
             else if (FindBoss.altered_3 == false)
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_3];
                 FindBoss.altered_3 = true;
-                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_3 + "\" changed to: " + health.hp);
+                EasierPantheonPractice.Instance.Log("Health of \"" + FindBoss.CurrentBoss_3 + "\" changed to: " + health.hp);
             }
             else if (FindBoss.altered_4 == false)
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_2];
                 FindBoss.altered_4 = true;
-                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_4 + "\" changed to: " + health.hp);
+                EasierPantheonPractice.Instance.Log("Health of \"" + FindBoss.CurrentBoss_4 + "\" changed to: " + health.hp);
             }
             else if (FindBoss.altered_5 == false)
             {
                 health.hp = Exceptions_BossHealth[FindBoss.CurrentBoss_5];
                 FindBoss.altered_5 = true;
-                EasierAscended.Instance.Log("Health of \"" + FindBoss.CurrentBoss_5 + "\" changed to: " + health.hp);
+                EasierPantheonPractice.Instance.Log("Health of \"" + FindBoss.CurrentBoss_5 + "\" changed to: " + health.hp);
             }
 
             if (!FindBoss.SOB) health.hp = p2_mantis_lords_health;//sets the health of the 2 lords in mantis lord fight

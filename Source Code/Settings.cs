@@ -1,6 +1,6 @@
 ﻿using Modding;
 
-namespace Easier_Ascended
+namespace Easier_Pantheon_Practice
 {
     public class GlobalModSettings : ModSettings
     {
@@ -8,5 +8,9 @@ namespace Easier_Ascended
         public int lifeblood = 0;
         public int soul = 0;
         public bool hitless_practice = false;
-    } 
+
+        public string Key_return_to_hog = "";
+        public string Key_teleport_around_HoG = "";
+
+    }
 }
