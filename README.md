@@ -1,7 +1,7 @@
 # Better P5 Practice
 
 ## Description:
-A mod that allows practice for P5 in HoG. This mod changes the health and damage of ascended bosses to match with P5 and adds the ability to remove health (for fury practice), add soul or lifeblood before each fight starts and an option for hitless practice.
+A mod that allows for Pantheon practice in HoG. This mod changes the health and damage of ascended bosses to match with the pantheons and adds the ability to remove health (for fury practice), add soul or lifeblood before each fight starts. Also adds other options such as hotkeys to quick;y return to HoG before a fight ends, a hotkey to quicky move around HoG,.
   
 ## Why Would I use this?:
 - It can be used to practice specific bosses in P5 such as **Markoth**.
