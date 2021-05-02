@@ -397,14 +397,18 @@ namespace Easier_Pantheon_Practice
                 }
             }
 
-            if (Input.GetKeyUp(KeyCode.N))
+            if (EasierPantheonPractice.Instance.settings.Key_Reload_Boss != "")
             {
-                if (Exceptions_BossSceneName.Contains(GameManager.instance.GetSceneNameString()) || _BossSceneName.ContainsKey(GameManager.instance.GetSceneNameString()))
+                if (Input.GetKeyUp(EasierPantheonPractice.Instance.settings.Key_Reload_Boss))
                 {
-                    LoadBossInLoop();
+                    if (Exceptions_BossSceneName.Contains(GameManager.instance.GetSceneNameString()) ||
+                        _BossSceneName.ContainsKey(GameManager.instance.GetSceneNameString()))
+                    {
+                        LoadBossInLoop();
+                    }
                 }
             }
-            
+
         }
 
 
