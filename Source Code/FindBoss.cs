@@ -22,13 +22,13 @@ namespace Easier_Pantheon_Practice
         private static Vector3 OldPosition, PosToMove;
         private static string CurrentScene;
         private static int current_move, WhichNext;
-        const int x_value = 0, y_value = 1;
+        private const int x_value = 0, y_value = 1;
         private static bool loop;
         private static string SceneToLoad;
 
 
 
-        Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
+        readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
         {
             { 0 , new List<float>{11f,36.4f } },//bench
             { 1 , new List<float>{207f,36.4f } },//nkg
@@ -37,7 +37,7 @@ namespace Easier_Pantheon_Practice
 
         };
 
-        Dictionary<string, string> _BossSceneName = new Dictionary<string, string>()
+        readonly Dictionary<string, string> _BossSceneName = new Dictionary<string, string>()
         {
             {"GG_Gruz_Mother_V", "Giant Fly"},
             {"GG_False_Knight","False Knight New" },
@@ -89,7 +89,7 @@ namespace Easier_Pantheon_Practice
             {"GG_Ghost_Markoth", "Ghost Warrior Markoth"},
         };
 
-        List<string> Exceptions_BossSceneName = new List<string>()
+        readonly List<string> Exceptions_BossSceneName = new List<string>()
         {
             "GG_Vengefly_V",
             "GG_Nailmasters",
@@ -119,7 +119,7 @@ namespace Easier_Pantheon_Practice
             return sceneName;
         }
 
-        private void DoDreamReturn(On.BossSceneController.orig_DoDreamReturn orig, BossSceneController self)
+        private static void DoDreamReturn(On.BossSceneController.orig_DoDreamReturn orig, BossSceneController self)
         {
             loop = false;
             orig(self);
@@ -129,7 +129,6 @@ namespace Easier_Pantheon_Practice
 
         private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
-            
             StartCoroutine(WaitPls_SceneLoad());
             EasierPantheonPractice.Instance.Log($"Scene name = {arg0.name}");
             EasierPantheonPractice.Instance.Log($"Boss index {BossSequenceController.BossIndex}");
@@ -333,7 +332,8 @@ namespace Easier_Pantheon_Practice
 
 
         #region In Scene Stuff
-        public static int Only1Damage(int damage)
+
+        private static int Only1Damage(int damage)
         { 
             if (EasierPantheonPractice.Instance.settings.hitless_practice) return 1000;
 
