@@ -13,5 +13,7 @@ namespace Easier_Pantheon_Practice
         public string Key_teleport_around_HoG = "";
         public string Key_Reload_Boss = "";
 
+        public bool funny_descriptions = true;
+
     }
 }
