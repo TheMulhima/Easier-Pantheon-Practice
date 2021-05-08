@@ -22,7 +22,7 @@ A mod that allows for Pantheon practice in HoG. It changes the health and damage
 
 ## How to Use:
 - Download the mod and open any existing save file. If you want to use it with a new save file, make one and then reload it.
-- To use the hotkeys/other settings, open the save file location and edit the values in EasierAscended.GlobalSettings.json. This generates after loading the game with the mod installed. To bind a key, add an (acceptable input)[https://drive.google.com/file/d/1aebQ9DMngjk3ZO6x7XHk89D5I9q5armr/view?usp=sharing] between the "" like `Key_Reload_Boss = "b"`.
+- To use the hotkeys/other settings, open the save file location and edit the values in EasierAscended.GlobalSettings.json. This generates after loading the game with the mod installed. To bind a key, add an [acceptable input](https://drive.google.com/file/d/1aebQ9DMngjk3ZO6x7XHk89D5I9q5armr/view?usp=sharing) between the "" like `Key_Reload_Boss = "b"`.
 
 ## Other:
 - The mod only works in Hall of Gods and doesn't affect pantheons or other areas of the game.
