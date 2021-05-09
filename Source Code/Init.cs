@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace Easier_Pantheon_Practice
 {
-    public class EasierPantheonPractice : Mod
+    public class EasierPantheonPractice : Mod,ITogglableMod
     {
 
         internal static EasierPantheonPractice Instance;
 
         public EasierPantheonPractice() : base("Easier Pantheon Practice") { }
         public override string GetVersion() => Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        
+
         public GlobalModSettings settings = new GlobalModSettings();
         public override ModSettings GlobalSettings
         {
@@ -20,7 +20,7 @@ namespace Easier_Pantheon_Practice
             set => settings = (GlobalModSettings) value;
         }
 
-        public static Dictionary<string, GameObject> PreloadedObjects = new Dictionary<string, GameObject>();
+        public static readonly Dictionary<string, GameObject> PreloadedObjects = new Dictionary<string, GameObject>();
         public override List<(string, string)> GetPreloadNames()
         {
             return new List<(string, string)>
@@ -88,10 +88,19 @@ namespace Easier_Pantheon_Practice
         private void Load_Easier_Ascended()
         {
             GameManager.instance.gameObject.AddComponent<FindBoss>();
+            if (!settings.remove_ingame_menu)
+            {
+                GameManager.instance.gameObject.AddComponent<GUIForSettings>();
+            }
         }
         private void Load_Save(SaveGameData data)
         {
             Load_Easier_Ascended();
+        }
+        public void Unload()
+        {
+            ModHooks.Instance.NewGameHook -= Load_Easier_Ascended; 
+            ModHooks.Instance.LanguageGetHook -= BossDesc;
         }
     }
 }

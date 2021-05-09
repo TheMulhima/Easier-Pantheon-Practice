@@ -13,7 +13,7 @@ namespace Easier_Pantheon_Practice
 {
     internal class FindBoss : MonoBehaviour
     {
-        private static int damage_to_be_dealt, current_move, WhichNext;
+        private static int damage_to_be_dealt, current_move;
         private const int x_value = 0, y_value = 1;
         public static bool altered, SOB;
         private static bool loop;
@@ -24,10 +24,9 @@ namespace Easier_Pantheon_Practice
         private readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
         {
             { 0 , new List<float>{11f,36.4f } },//bench
-            { 1 , new List<float>{207f,36.4f } },//nkg
-            { 2 , new List<float>{29f,6.4f } },//gruz
-            { 3 , new List<float>{207f,6.4f } },//gpz
-
+            { 1 , new List<float>{207f,6.4f } },//gpz
+            //{ 2 , new List<float>{29f,6.4f } },//gruz
+            //{ 3 , new List<float>{207f,36.4f } },//nkg
         };
 
         private readonly Dictionary<string, string> _BossSceneName = new Dictionary<string, string>()
@@ -104,7 +103,7 @@ namespace Easier_Pantheon_Practice
             ModHooks.Instance.BeforeSceneLoadHook += BeforeSceneChange;
             USceneManager.sceneLoaded += SceneManager_sceneLoaded;
             On.BossSceneController.DoDreamReturn += DoDreamReturn;
-            ModHooks.Instance.HeroUpdateHook += HotKeys; 
+            ModHooks.Instance.HeroUpdateHook += HotKeys;
         }
         private string BeforeSceneChange(string sceneName)
         {
@@ -267,8 +266,7 @@ namespace Easier_Pantheon_Practice
                         EventRegister.SendEvent("ADD BLUE HEALTH");
                 }
 
-                HC.AddMPCharge(EasierPantheonPractice.Instance.settings.soul);
-
+                HC.AddMPCharge(settings.soul);
             }
 
             #endregion
@@ -284,23 +282,26 @@ namespace Easier_Pantheon_Practice
 
                 if (settings.Key_return_to_hog != "")
                 {
-
-                    if (Input.GetKeyDown(settings.Key_return_to_hog))
+                    if (UnityEngine.Input.GetKeyDown(settings.Key_return_to_hog))
                     {
-                        if (loop||(DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
-                        {
-                            StartCoroutine(LoadWorkshop());
+                        if (HC.acceptingInput)
+                        {   
+                            if (loop||(DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
+                            {
+                                StartCoroutine(LoadWorkshop());
+                            }
                         }
                     }
                 }
 
                 if (settings.Key_teleport_around_HoG != "")
                 {
-                    if (Input.GetKeyDown(settings.Key_teleport_around_HoG))
+                    if (UnityEngine.Input.GetKeyDown(settings.Key_teleport_around_HoG))
                     {
                         if (theCurrentScene == "GG_Workshop")
                         {
-                            FindNextStop();
+                            current_move++;
+                            current_move %= 2;
                             PosToMove.Set(MoveAround[current_move][x_value], MoveAround[current_move][y_value], 0f);
                             HC.transform.position = PosToMove;
                         }
@@ -309,11 +310,14 @@ namespace Easier_Pantheon_Practice
 
                 if (settings.Key_Reload_Boss != "")
                 {
-                    if (Input.GetKeyUp(settings.Key_Reload_Boss))
+                    if (UnityEngine.Input.GetKeyUp(settings.Key_Reload_Boss))
                     {
-                        if (loop || (DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
+                        if (HC.acceptingInput)
                         {
-                            LoadBossInLoop();
+                            if (loop || (DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
+                            {
+                                LoadBossInLoop();
+                            }
                         }
                     }
                 }
@@ -340,8 +344,7 @@ namespace Easier_Pantheon_Practice
                 GM.ResetSemiPersistentItems();
                 HC.enterWithoutInput = true;
                 HC.AcceptInput();
-
-
+                
                 GM.BeginSceneTransition(new GameManager.SceneLoadInfo
                 {
                     SceneName = SceneToLoad,
@@ -354,7 +357,6 @@ namespace Easier_Pantheon_Practice
 
             private IEnumerator LoadWorkshop()
             {
-                if (!(loop || PreviousScene == "GG_Workshop")) StopCoroutine(LoadWorkshop());
                 loop = false;
                 GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
                 {
@@ -375,12 +377,7 @@ namespace Easier_Pantheon_Practice
             }
 
 
-            public void FindNextStop()
-            {
-                current_move = WhichNext;
-                if (WhichNext == 3) WhichNext = 0;
-                else WhichNext++;
-            }
+            
 
             #endregion
 
