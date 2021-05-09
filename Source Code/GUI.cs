@@ -10,7 +10,7 @@ namespace Easier_Pantheon_Practice
         public GUIStyle Default_Label, Default_Button;
         private static bool checking_for_bind;
         private static string looking_for_input, current_setting;
-        private const int width = 350, height = 350;
+        private const int width = 375, height = 375;
         
         private void Awake()
         {
@@ -22,7 +22,7 @@ namespace Easier_Pantheon_Practice
             var gm = GameManager.instance;
             var instance = EasierPantheonPractice.Instance;
             var settings = instance.settings;
-
+            
             if (!gm.isPaused) return;
             if (gm.GetSceneNameString() != "GG_Workshop") return;
             if (checking_for_bind) return;
@@ -43,7 +43,11 @@ namespace Easier_Pantheon_Practice
             GUI.skin.font.name = "TrajanBold";
             GUILayout.BeginArea(new Rect(Screen.width - (width + 20), Screen.height - (Screen.height/2 > height ? Screen.height/2: height + 20), width, height));
             
-            GUILayout.Label("Easier Pantheon Practice Settings",Default_Label);
+            GUILayout.Label("Easier Pantheon Practice",Default_Label);
+            GUI.contentColor = Color.cyan;
+            GUILayout.Label("Settings",Default_Label);
+            GUI.contentColor = Color.white;
+            GUI.skin.button.onHover.textColor = Color.grey;
             if (GUILayout.Button($"Remove Health: {settings.remove_health}", Default_Button))
             {
                 settings.remove_health++;
@@ -63,6 +67,9 @@ namespace Easier_Pantheon_Practice
             {
                 settings.hitless_practice = !settings.hitless_practice;
             }
+            GUI.contentColor = Color.cyan;
+            GUILayout.Label("KeyBinds",Default_Label);
+            GUI.contentColor = Color.white;
             if (GUILayout.Button($"Key: Return to HOG: {PrintSetting(settings.Key_return_to_hog)}", Default_Button))
             {
                 Keybind("Key: Return to HOG");
@@ -83,13 +90,13 @@ namespace Easier_Pantheon_Practice
         private void Keybind(string the_current_setting)
         {
             CreateCanvas();
-            _textObj.text = "Waiting for input";
+            _textObj.text = "Waiting for input ";
             current_setting = the_current_setting;
             checking_for_bind = true;
         }
         private IEnumerator DeleteText(string calling_text)
         {
-            yield return new WaitForSecondsRealtime(2f);
+            yield return new WaitForSecondsRealtime(3f);
             if (_textObj.text == calling_text) _textObj.text = "";
         }
         public void Update()
@@ -100,23 +107,47 @@ namespace Easier_Pantheon_Practice
             if (e.isKey)
             {
                 looking_for_input = e.character.ToString();
-
-                switch (current_setting)
+                try
                 {
-                    case "Key: Return to HOG":
-                        settings.Key_return_to_hog = looking_for_input;
-                        break;
-                    case "Key: Reload Boss":
-                        settings.Key_Reload_Boss = looking_for_input;
-                        break;
-                    case "Key: Teleport Around HOG":
-                        settings.Key_teleport_around_HoG = looking_for_input;
-                        break;
-                }
+                    Input.GetKeyDown(looking_for_input);
+                    switch (current_setting)
+                    {
+                        case "Key: Return to HOG":
+                            settings.Key_return_to_hog = looking_for_input;
+                            break;
+                        case "Key: Reload Boss":
+                            settings.Key_Reload_Boss = looking_for_input;
+                            break;
+                        case "Key: Teleport Around HOG":
+                            settings.Key_teleport_around_HoG = looking_for_input;
+                            break;
+                    }
                 
-                _textObj.text = $"The binding for {current_setting} is {looking_for_input}";
-                GameManager.instance.StartCoroutine(
-                    DeleteText($"The binding for {current_setting} is {looking_for_input}"));
+                    _textObj.text = $"The binding for {current_setting} is {looking_for_input} ";
+                    GameManager.instance.StartCoroutine(
+                        DeleteText($"The binding for {current_setting} is {looking_for_input} "));
+                }
+                catch
+                {
+                    looking_for_input = "";
+                    switch (current_setting)
+                    {
+                        case "Key: Return to HOG":
+                            settings.Key_return_to_hog = looking_for_input;
+                            break;
+                        case "Key: Reload Boss":
+                            settings.Key_Reload_Boss = looking_for_input;
+                            break;
+                        case "Key: Teleport Around HOG":
+                            settings.Key_teleport_around_HoG = looking_for_input;
+                            break;
+                    }
+                    _textObj.text = "The binding was unsuccessful ";
+                    GameManager.instance.StartCoroutine(
+                        DeleteText("The binding was unsuccessful "));
+                }
+
+               
                 checking_for_bind = false;
 
             }
