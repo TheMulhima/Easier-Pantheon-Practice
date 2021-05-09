@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Easier_Pantheon_Practice
 {
-    public class EasierPantheonPractice : Mod,ITogglableMod
+    public class EasierPantheonPractice : Mod
     {
 
         internal static EasierPantheonPractice Instance;
@@ -32,7 +32,6 @@ namespace Easier_Pantheon_Practice
         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
             Instance = this;
-            
             PreloadedObjects.Add("Inspect", preloadedObjects["GG_Workshop"]["GG_Statue_Hornet/Inspect"]);
             
             ModHooks.Instance.AfterSavegameLoadHook += Load_Save;
@@ -96,11 +95,6 @@ namespace Easier_Pantheon_Practice
         private void Load_Save(SaveGameData data)
         {
             Load_Easier_Ascended();
-        }
-        public void Unload()
-        {
-            ModHooks.Instance.NewGameHook -= Load_Easier_Ascended; 
-            ModHooks.Instance.LanguageGetHook -= BossDesc;
         }
     }
 }

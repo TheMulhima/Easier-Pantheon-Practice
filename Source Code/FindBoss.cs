@@ -1,3 +1,4 @@
+using System;
 using Modding;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -97,13 +98,30 @@ namespace Easier_Pantheon_Practice
             "GG_Mantis_Lords",
         };
 
-        
+        public void Awake()
+        {
+            TryKeys();
+        }
+
+        private void TryKeys()
+        {
+            var settings = EasierPantheonPractice.Instance.settings;
+            
+            try {Input.GetKeyDown(settings.Key_return_to_hog);}
+            catch {settings.Key_return_to_hog = "";}
+            try {Input.GetKeyDown(settings.Key_Reload_Boss);}
+            catch {settings.Key_Reload_Boss = "";}
+            try {Input.GetKeyDown(settings.Key_teleport_around_HoG);}
+            catch {settings.Key_teleport_around_HoG = "";}
+        }
+
         private void Start()
         {
             ModHooks.Instance.BeforeSceneLoadHook += BeforeSceneChange;
             USceneManager.sceneLoaded += SceneManager_sceneLoaded;
             On.BossSceneController.DoDreamReturn += DoDreamReturn;
             ModHooks.Instance.HeroUpdateHook += HotKeys;
+            
         }
         private string BeforeSceneChange(string sceneName)
         {
@@ -191,6 +209,9 @@ namespace Easier_Pantheon_Practice
             yield return new WaitForFinishedEnteringScene();
             ApplySettings();
             yield return null;
+            
+            HeroController.instance.AddMPCharge(1);
+            HeroController.instance.AddMPCharge(-1);
         }
 
        
@@ -282,7 +303,7 @@ namespace Easier_Pantheon_Practice
 
                 if (settings.Key_return_to_hog != "")
                 {
-                    if (UnityEngine.Input.GetKeyDown(settings.Key_return_to_hog))
+                    if (Input.GetKeyDown(settings.Key_return_to_hog))
                     {
                         if (HC.acceptingInput)
                         {   
@@ -296,13 +317,12 @@ namespace Easier_Pantheon_Practice
 
                 if (settings.Key_teleport_around_HoG != "")
                 {
-                    if (UnityEngine.Input.GetKeyDown(settings.Key_teleport_around_HoG))
+                    if (Input.GetKeyDown(settings.Key_teleport_around_HoG))
                     {
                         if (theCurrentScene == "GG_Workshop")
                         {
                             current_move++;
-                            current_move %= 2;
-                            PosToMove.Set(MoveAround[current_move][x_value], MoveAround[current_move][y_value], 0f);
+                            PosToMove.Set(MoveAround[current_move % 2][x_value], MoveAround[current_move % 2][y_value], 0f);
                             HC.transform.position = PosToMove;
                         }
                     }
@@ -310,7 +330,7 @@ namespace Easier_Pantheon_Practice
 
                 if (settings.Key_Reload_Boss != "")
                 {
-                    if (UnityEngine.Input.GetKeyUp(settings.Key_Reload_Boss))
+                    if (Input.GetKeyUp(settings.Key_Reload_Boss))
                     {
                         if (HC.acceptingInput)
                         {
@@ -353,6 +373,16 @@ namespace Easier_Pantheon_Practice
                     Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
                     PreventCameraFadeOut = true
                 });
+                StartCoroutine(FixSoul());
+            }
+
+            private IEnumerator FixSoul()
+            {
+                yield return new WaitForFinishedEnteringScene();
+                yield return null;
+                yield return new WaitForSeconds(1f);
+                HeroController.instance.AddMPCharge(1);
+                HeroController.instance.AddMPCharge(-1);
             }
 
             private IEnumerator LoadWorkshop()
