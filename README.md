@@ -15,7 +15,7 @@ A mod that makes practicing in HoG easier. Its main features are: allows you to 
 - lifeblood -> add the specified amount of lifeblood each time a boss scene in HoG is loaded.
 - soul -> add the specified amount of soul each time a boss scene in HoG is loaded. The GUI will only allow adding 33 soul each time. if you want less (because you are using soul twister) you can do that from the settings file.
 - hitless_practice -> makes you die in 1 hit to bosses. The advantage of using this over radiant fights is 1) bosses have same health as p5 2) ability to usse other features of the mod like adding soul or quickly reloading bosses.
-### Each click on the button will increment the setting. so to get from remove health:0 to remove health:8, click on the button 8 times
+#### Each click on the button will increment the setting. So to get from remove_health:0 to remove health:8, click on the button 8 times. To get from 8 -> 1 press 2 times (8 ->0, 0 -> 1 (8 is the max value is you have 9 health)
 - Key_Reload_Boss -> Press this key during a boss fight to quickly reload the boss. Probs should be done just as the boss dies. Note that after pressing the reload key and killing the boss, you won't be able to return normally. you will need to press the "Key_return_to_hog" or dreamgate.
   - Just for reference, using this takes 2 seconds to load a boss while doing it normally takes around 15 seconds. 
 - Key_return_to_hog -> Equivalent to dream gating but much faster and doesn't burn your eyes by flashing a white screen
