@@ -144,7 +144,7 @@ namespace Easier_Pantheon_Practice
         private void Collector()
         {
             _control = gameObject.LocateMyFSM("Phase Control");
-            _control.Fsm.GetFsmInt("Phase 2 HP").Value = 300;
+            _control.Fsm.GetFsmInt("Phase 2 HP").Value = 350;
         }
 
         private void Grimms()
