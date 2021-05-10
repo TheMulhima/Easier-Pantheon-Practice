@@ -1,7 +1,7 @@
 Easier Pantheon Practice
 
 # Description:
-A mod that makes practicing in HoG easier. It adds many features some of them include, allowing you to press a key to reload bosses much quicker, matches the health and damage of bosses with P5, and gives you the ability to do fury practice in HoG. There are more but you can read the readme for that ¬‿¬.
+A mod that makes practicing for pantheons in HoG easier. It adds many features some of them include, allowing you to press a key to reload bosses much quicker, matches the health and damage of bosses with P5, and gives you the ability to do fury practice in HoG. There are more but you can read the readme for that :)
 
 # How to use
 - Download this mod, the Modding API and SFCore from the modinstaller.
