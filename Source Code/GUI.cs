@@ -39,12 +39,12 @@ namespace Easier_Pantheon_Practice
             };
 
             GUI.contentColor = Color.white;
-            GUI.skin.button.onHover.textColor = Color.cyan;
             GUI.skin.font.name = "TrajanBold";
+            
             GUILayout.BeginArea(new Rect(Screen.width - (width + 20), Screen.height - (Screen.height/2 > height ? Screen.height/2: height + 20), width, height));
             
             GUILayout.Label("Easier Pantheon Practice",Default_Label);
-            GUI.contentColor = Color.cyan;
+            GUI.contentColor = Color.gray;
             GUILayout.Label("Settings",Default_Label);
             GUI.contentColor = Color.white;
             GUI.skin.button.onHover.textColor = Color.grey;
@@ -67,7 +67,7 @@ namespace Easier_Pantheon_Practice
             {
                 settings.hitless_practice = !settings.hitless_practice;
             }
-            GUI.contentColor = Color.cyan;
+            GUI.contentColor = Color.gray;
             GUILayout.Label("KeyBinds",Default_Label);
             GUI.contentColor = Color.white;
             if (GUILayout.Button($"Key: Return to HOG: {PrintSetting(settings.Key_return_to_hog)}", Default_Button))
@@ -94,11 +94,7 @@ namespace Easier_Pantheon_Practice
             current_setting = the_current_setting;
             checking_for_bind = true;
         }
-        private IEnumerator DeleteText(string calling_text)
-        {
-            yield return new WaitForSecondsRealtime(3f);
-            if (_textObj.text == calling_text) _textObj.text = "";
-        }
+        
         public void Update()
         {
             var settings = EasierPantheonPractice.Instance.settings;
@@ -183,6 +179,11 @@ namespace Easier_Pantheon_Practice
             _textObj.font = CanvasUtil.TrajanBold;
             _textObj.text = "";
             _textObj.fontSize = 30;
+        }
+        private IEnumerator DeleteText(string calling_text)
+        {
+            yield return new WaitForSecondsRealtime(3f);
+            if (_textObj.text == calling_text) _textObj.text = "";
         }
     }
 }

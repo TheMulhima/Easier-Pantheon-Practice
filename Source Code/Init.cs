@@ -77,9 +77,9 @@ namespace Easier_Pantheon_Practice
                     case "CHARM_NAME_2":           return "OP Compass";
                     case "CHARM_DESC_2":           return "Its the most OP charm in the game.<br><br>Wear this charm to get good";
                 }
-                #endregion
+                
             }
-            
+            #endregion
             
             return Language.Language.GetInternal(key, sheet);
         }
