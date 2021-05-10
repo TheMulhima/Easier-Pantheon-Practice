@@ -11,18 +11,20 @@ A mod that makes practicing in HoG easier. Its main features are: allows you to 
 
 # Features Explanation
 ## Settings
+### To use: Click on the button in the GUI to increment the setting.
 - remove_health -> removed the specified value of health each time a boss scene in HoG is loaded. Useful for learning fury strats. 
   -  Fury can be setup on each boss load by setting remove_health to your max health - 1 and lifeblood to 4-5 (optional).
 - lifeblood -> add the specified amount of lifeblood each time a boss scene in HoG is loaded.
 - soul -> add the specified amount of soul each time a boss scene in HoG is loaded. The GUI will only allow adding 33 soul each time. if you want less (because you are using soul twister) you can do that from the settings file.
 - hitless_practice -> makes you die in 1 hit to bosses. The advantage of using this over radiant fights is 1) bosses have same health as p5 2) ability to use other features of the mod like adding soul or quickly reloading bosses.
-Note: Each click on the button will increment the setting. So to get from remove_health:0 to remove health:8, click on the button 8 times. To get from 8 -> 1 press 2 times (8 ->0, 0 -> 1 (8 is the max value is you have 9 health)
+##### Note: Each click on the button will increment the setting. So to get from remove_health:0 to remove health:8, click on the button 8 times. To get to a lower value like from 8 to 1, press the button 2 times (8 -> 0, 0 -> 1 (8 is the max value for remove_healh if you have 9 health))
 ## KeyBinds
+### To use: Click on the button in the GUI to change the bind.
 - Key_Reload_Boss -> Press this key during a boss fight to quickly reload the boss. Probs should be done just as the boss dies. Note that after pressing the reload key and killing the boss, you won't be able to return normally. you will need to press the "Key_return_to_hog" or dreamgate.
   - Just for reference, using this takes 2 seconds to load a boss while doing it normally takes around 15 seconds. 
 - Key_return_to_hog -> Equivalent to dream gating but much faster and doesn't burn your eyes by flashing a white screen
 - Key_teleport_around_HoG -> Teleports you aound HoG. It alternates between the bench and gpz statue.
-Note: If you click on the button on the GUI that corresponds to keys, it will give you the option to bind them. just click the button and then press the key you want to bind to.
+##### To unbind: Click on the button on the GUI then press esc key to close the pause menu.
 
  # Common use cases:
 - Practice fighting in pantheons with **Fury of the Fallen**.
