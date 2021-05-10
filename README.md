@@ -21,7 +21,7 @@ A mod that makes practicing in HoG easier. Its main features are: allows you to 
 ## KeyBinds
 ### To use: Click on the button in the GUI to change the bind.
 - Key_Reload_Boss -> Press this key during a boss fight to quickly reload the boss. Probs should be done just as the boss dies. Note that after pressing the reload key and killing the boss, you won't be able to return normally. you will need to press the "Key_return_to_hog" or dreamgate.
-  - Just for reference, using this takes 2 seconds to load a boss while doing it normally takes around 15 seconds. 
+  - Just for reference, using this takes 2 seconds to load a boss when using this key. On the other hand, doing it normally takes around 15 seconds. 
 - Key_return_to_hog -> Equivalent to dream gating but much faster and doesn't burn your eyes by flashing a white screen
 - Key_teleport_around_HoG -> Teleports you aound HoG. It alternates between the bench and gpz statue.
 ##### To unbind: Click on the button on the GUI then press esc key to close the pause menu.
