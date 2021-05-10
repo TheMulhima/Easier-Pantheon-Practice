@@ -41,5 +41,4 @@ A mod that makes practicing in HoG easier. It adds many features some of them in
 # Dependancies:
 - This mod depends on Modding API (Obviously) and SFCore.
 # Credits
-- Thank you to everyone in #modding-development for helping me make this mod and also for having open source code for me to read ~~and copy~~.
-- Special thanks to 56, redfrog and sfgrenade for some of their code and zuiivel for their help.
+- Thnk you to 56, RedFrog and SFGrenade for some of their code and zuiivel for their help.
