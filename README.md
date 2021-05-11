@@ -7,7 +7,7 @@ A mod that makes practicing in HoG easier. It adds many features some of them in
 - Download this mod, the Modding API and SFCore from the modinstaller.
 - To change the settings, pause the game in Hall of Gods and click on the buttons to increment the setting / bind a key. There isn't a way to decrement the counter so if you want to go back, just click on it until it turns to 0 (which will happen after it crosses the max value)
 - To practice a Pantheon 5 boss, fight ascended. To Practice a Pantheon 1-4 boss, fight attuned.  
-- If a key isn't registered using the GUI, go to the saves folder and add an [acceptable input](https://drive.google.com/file/d/1aebQ9DMngjk3ZO6x7XHk89D5I9q5armr/view?usp=sharing) in the respective keys to add a key bind. e.g.  `Key_teleport_around_HoG = "z"`. (e.g. function keys can't be binded using the GUI)
+- If a key isn't registered using the GUI, go to the saves folder and add an [acceptable input](https://drive.google.com/file/d/1aebQ9DMngjk3ZO6x7XHk89D5I9q5armr/view?usp=sharing) in the respective keys to add a key bind. e.g.  `Key_teleport_around_HoG = "z"`.
 
 # Features Explanation
 ## Settings
