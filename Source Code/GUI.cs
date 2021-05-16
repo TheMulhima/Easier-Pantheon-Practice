@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Modding;
 using UnityEngine.UI;
@@ -95,16 +97,164 @@ namespace Easier_Pantheon_Practice
             checking_for_bind = true;
         }
         
+        private List<string> Keys = new List<string>(){
+        "backspace",
+        "delete",
+        "tab",
+        "clear",
+        "return",
+        "pause",
+        "space",
+        "up",
+        "down",
+        "right",
+        "left",
+        "insert",
+        "home",
+        "end",
+        "page up",
+        "page down",
+        "f1",
+        "f2",
+        "f3",
+        "f4",
+        "f5",
+        "f6",
+        "f7",
+        "f8",
+        "f9",
+        "f10",
+        "f11",
+        "f12",
+        "f13",
+        "f14",
+        "f15",
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "!",
+        "\"",
+        "#",
+        "$",
+        "&",
+        "'",
+        "(",
+        ")",
+        "*",
+        "+",
+        ",",
+        "-",
+        ".",
+        "/",
+        ":",
+        ";",
+        "<",
+        "=",
+        ">",
+        "?",
+        "@",
+        "[",
+        "\\",
+        "]",
+        "^",
+        "_",
+        "`",
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z",
+        "numlock",
+        "caps lock",
+        "scroll lock",
+        "right shift",
+        "left shift",
+        "right ctrl",
+        "left ctrl",
+        "right alt",
+        "left alt",
+        "[0]",
+        "[1]",
+        "[2]",
+        "[3]",
+        "[4]",
+        "[5]",
+        "[6]",
+        "[7]",
+        "[8]",
+        "[9]",
+        "[+]",
+        "[-]",
+        "[*]",
+        "[/]",
+        "[.]",
+        "mouse 0",
+        "mouse 1",
+        "mouse 2",
+        
+        };
+
         public void Update()
         {
             var settings = EasierPantheonPractice.Instance.settings;
             if (!checking_for_bind) return;
-            Event e = Event.current;
-            if (e.isKey)
+
+            if (Input.GetKeyDown("escape"))
             {
-                looking_for_input = e.character.ToString();
-                try
+                looking_for_input = "";
+                switch (current_setting)
                 {
+                    case "Key: Return to HOG":
+                        settings.Key_return_to_hog = looking_for_input;
+                        break;
+                    case "Key: Reload Boss":
+                        settings.Key_Reload_Boss = looking_for_input;
+                        break;
+                    case "Key: Teleport Around HOG":
+                        settings.Key_teleport_around_HoG = looking_for_input;
+                        break;
+                }
+
+                _textObj.text = "The key was unbound  ";
+                GameManager.instance.StartCoroutine(
+                    DeleteText("The key was unbound  "));
+                checking_for_bind = false;
+            }
+
+            foreach (string keypress in Keys)
+            {
+                if (Input.GetKeyDown(keypress))
+                {
+                    looking_for_input = keypress;
+
                     Input.GetKeyDown(looking_for_input);
                     switch (current_setting)
                     {
@@ -118,36 +268,16 @@ namespace Easier_Pantheon_Practice
                             settings.Key_teleport_around_HoG = looking_for_input;
                             break;
                     }
-                
+
                     _textObj.text = $"The binding for {current_setting} is {looking_for_input} ";
                     GameManager.instance.StartCoroutine(
                         DeleteText($"The binding for {current_setting} is {looking_for_input} "));
-                }
-                catch
-                {
-                    looking_for_input = "";
-                    switch (current_setting)
-                    {
-                        case "Key: Return to HOG":
-                            settings.Key_return_to_hog = looking_for_input;
-                            break;
-                        case "Key: Reload Boss":
-                            settings.Key_Reload_Boss = looking_for_input;
-                            break;
-                        case "Key: Teleport Around HOG":
-                            settings.Key_teleport_around_HoG = looking_for_input;
-                            break;
-                    }
-                    _textObj.text = "The binding was unsuccessful ";
-                    GameManager.instance.StartCoroutine(
-                        DeleteText("The binding was unsuccessful "));
-                }
+                    checking_for_bind = false;
 
-               
-                checking_for_bind = false;
-
+                }
             }
         }
+
         public static Text _textObj;
         public static GameObject _canvas;
 
