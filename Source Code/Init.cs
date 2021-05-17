@@ -7,7 +7,6 @@ namespace Easier_Pantheon_Practice
 {
     public class EasierPantheonPractice : Mod
     {
-
         internal static EasierPantheonPractice Instance;
 
         public EasierPantheonPractice() : base("Easier Pantheon Practice") { }
@@ -25,7 +24,7 @@ namespace Easier_Pantheon_Practice
         {
             return new List<(string, string)>
             {
-                ("GG_Workshop", "GG_Statue_Hornet/Inspect"),
+                ("GG_Workshop", "GG_Statue_Hornet/Inspect"),//need this for reload boss feature
             };
         }
 
@@ -87,6 +86,8 @@ namespace Easier_Pantheon_Practice
         private void Load_Easier_Ascended()
         {
             GameManager.instance.gameObject.AddComponent<FindBoss>();
+            
+            //honestly not sure why i added this because GUI > setting file. but its there if someone wants it
             if (!settings.remove_ingame_menu)
             {
                 GameManager.instance.gameObject.AddComponent<GUIForSettings>();

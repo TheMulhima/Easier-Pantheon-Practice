@@ -78,7 +78,7 @@ namespace Easier_Pantheon_Practice
         private void Start()
         {
             
-            if (FindBoss.altered == false)
+            if (FindBoss.altered == false)//if this isnt there then all bosses in scene get their health changed to the boss that is in the main dict
             {
                 health.hp = Health_CurrentBoss[FindBoss.CurrentBoss];
                 FindBoss.altered = true;
@@ -90,8 +90,6 @@ namespace Easier_Pantheon_Practice
                 health.hp = Health_CurrentBoss_1[FindBoss.CurrentBoss_1];
                 if (!FindBoss.SOB) health.hp = 350;
             }
-            
-            
 
             ChangeFSM();
             BossSceneController.Instance.BossLevel = 0;
@@ -186,11 +184,6 @@ namespace Easier_Pantheon_Practice
             //WHY DOES FK AND FC HAVE THEIR RECOVER HEALTH IN DIFFERENT FSMs
             _control.Fsm.GetFsmInt("Recover HP").Value = 260;
         }
-
-
         #endregion
-
     }
-
-
 }
