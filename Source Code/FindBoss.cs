@@ -4,20 +4,24 @@ using UnityEngine.SceneManagement;
 using USceneManager = UnityEngine.SceneManagement.SceneManager;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
+using HutongGames.PlayMaker;
 using UObject = UnityEngine.Object;
 using HutongGames.PlayMaker.Actions;
 using SFCore.Utils;
 
 
+
 namespace Easier_Pantheon_Practice
 {
-    internal class FindBoss : MonoBehaviour
+    public class FindBoss : MonoBehaviour
     {
         private const int x_value = 0, y_value = 1;             //to make the move position function more readable
         private static int damage_to_be_dealt, current_move;
         public static bool altered, SOB;                        //to allow some functions to be readable
         private static bool loop;
         private static string PreviousScene, SceneToLoad;
+        private string MapZone;
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
 
@@ -139,7 +143,7 @@ namespace Easier_Pantheon_Practice
                 if (!loop) ModHooks.Instance.TakeHealthHook += Only1Damage;
                 
                 StartCoroutine(ApplySettings());
-                
+                MapZone = GameManager.instance.GetCurrentMapZone();
                 if (Exceptions_BossSceneName.Contains(arg0.name))
                 {
                     switch (arg0.name)
@@ -261,6 +265,8 @@ namespace Easier_Pantheon_Practice
         {
             var settings = EasierPantheonPractice.Instance.settings;
             var HC = HeroController.instance;
+            
+            
             string theCurrentScene = GameManager.instance.GetSceneNameString();
 
             if (settings.Key_return_to_hog != "")
@@ -304,7 +310,7 @@ namespace Easier_Pantheon_Practice
                 }
             }
         }
-
+        
         public void LoadBossScene()
         {
             var HC = HeroController.instance;
@@ -343,30 +349,36 @@ namespace Easier_Pantheon_Practice
         {
             yield return new WaitForFinishedEnteringScene();
             yield return null;
-            yield return new WaitForSeconds(1f);//this line differenciates this from ApplySettings
+            yield return new WaitForSeconds(1f);//this line differenciates this function from ApplySettings
             HeroController.instance.AddMPCharge(1);
             HeroController.instance.AddMPCharge(-1);
         }
 
         private IEnumerator LoadWorkshop()
         {
+            yield return null;
             loop = false;
+            var HC = HeroController.instance;
+            var pd = PlayerData.instance;
+            GameManager.instance.gameMap.GetComponent<GameMap>().SetDoorValues(OldPosition.x, OldPosition.y,"GG_WorkShop",MapZone);
+            pd.gMap_doorX =OldPosition.x;
+            pd.gMap_doorY = OldPosition.y;
+
+            HC.RelinquishControl();
+            HC.StopAnimationControl();
+            HC.enterWithoutInput = true;
+
             GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
-                IsFirstLevelForPlayer = false,
                 SceneName = "GG_Workshop",
-                HeroLeaveDirection = GlobalEnums.GatePosition.unknown,
-                EntryGateName = "left1",
-                PreventCameraFadeOut = false,
-                WaitForSceneTransitionCameraFade = true,
-                Visualization = GameManager.SceneLoadVisualizations.Default,
-                AlwaysUnloadUnusedAssets = false
+                EntryDelay = 0,
+                PreventCameraFadeOut = true,
+                Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
             });
-
             yield return new WaitForFinishedEnteringScene();
-            yield return new WaitForSceneLoadFinish();
-            yield return new WaitUntil(() => HeroController.instance.acceptingInput);
-            HeroController.instance.transform.position = OldPosition;
+            HC.RegainControl();
+            HC.StartAnimationControl();
+
         }
         
         #endregion
@@ -406,7 +418,7 @@ namespace Easier_Pantheon_Practice
             return sceneName;
         }
 
-        private static void DoDreamReturn(On.BossSceneController.orig_DoDreamReturn orig, BossSceneController self)
+        private void DoDreamReturn(On.BossSceneController.orig_DoDreamReturn orig, BossSceneController self)
         {
             //this comes to play when the player dies or dreamgates
             loop = false;
