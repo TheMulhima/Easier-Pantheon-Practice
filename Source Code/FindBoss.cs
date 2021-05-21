@@ -33,7 +33,7 @@ namespace Easier_Pantheon_Practice
 
         
         //Dict for bosses that have only 1 boss in them
-        private readonly Dictionary<string, string> _BossSceneName = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> _BossSceneName = new Dictionary<string, string>()
         {
             {"GG_Gruz_Mother_V", "Giant Fly"},
             {"GG_False_Knight","False Knight New" },
@@ -86,7 +86,7 @@ namespace Easier_Pantheon_Practice
 
         
         //Dict for bosses that have only 2 boss in them
-        private readonly Dictionary<string, List<string>> SemiExceptions_BossSceneName =
+        private static readonly Dictionary<string, List<string>> SemiExceptions_BossSceneName =
             new Dictionary<string, List<string>>()
             {
                 {"GG_Vengefly_V", new List<string>() {"Giant Buzzer Col", "Giant Buzzer Col (1)"}},
@@ -98,7 +98,7 @@ namespace Easier_Pantheon_Practice
             };
         
         //Dict for bosses that have more than 2 boss in them
-        private readonly List<string> Exceptions_BossSceneName = new List<string>()
+        private static readonly List<string> Exceptions_BossSceneName = new List<string>()
         {
             "GG_Mantis_Lords_V",
             "GG_Watcher_Knights",
@@ -116,6 +116,7 @@ namespace Easier_Pantheon_Practice
             USceneManager.sceneLoaded += SceneManager_sceneLoaded;
             On.BossSceneController.DoDreamReturn += DoDreamReturn;
             ModHooks.Instance.HeroUpdateHook += HotKeys;
+            ModHooks.Instance.TakeHealthHook += Only1Damage;
         }
 
         private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
@@ -131,17 +132,9 @@ namespace Easier_Pantheon_Practice
             CurrentBoss = CurrentBoss_1 = ""; 
 
             ReflectionHelper.GetField(typeof(BossSequenceController), "bossIndex", false).SetValue(null, 1);
-
-            if (DoesDictContain(PreviousScene))
-            {
-                if (!loop) ModHooks.Instance.TakeHealthHook -= Only1Damage;
-
-            }
-
+            
             if (DoesDictContain(arg0.name))
             {
-                if (!loop) ModHooks.Instance.TakeHealthHook += Only1Damage;
-                
                 StartCoroutine(ApplySettings());
                 MapZone = GameManager.instance.GetCurrentMapZone();
                 if (Exceptions_BossSceneName.Contains(arg0.name))
@@ -249,7 +242,8 @@ namespace Easier_Pantheon_Practice
         }
         private static int Only1Damage(int damage)
         {
-            damage_to_be_dealt = BossSceneController.Instance.BossLevel == 1 ? damage / 2 : damage;
+            if (!(loop||(DoesDictContain(GameManager.instance.GetSceneNameString()) && PreviousScene == "GG_Workshop"))) return damage;
+            damage_to_be_dealt = BossSceneController.Instance.BossLevel == 1 ? (damage / 2) : damage;
 
             if (EasierPantheonPractice.Instance.settings.hitless_practice) damage_to_be_dealt = 1000;
 
@@ -356,19 +350,34 @@ namespace Easier_Pantheon_Practice
 
         private IEnumerator LoadWorkshop()
         {
-            yield return null;
             loop = false;
-            var HC = HeroController.instance;
-            var pd = PlayerData.instance;
-            GameManager.instance.gameMap.GetComponent<GameMap>().SetDoorValues(OldPosition.x, OldPosition.y,"GG_WorkShop",MapZone);
-            pd.gMap_doorX =OldPosition.x;
-            pd.gMap_doorY = OldPosition.y;
-
-            HC.RelinquishControl();
-            HC.StopAnimationControl();
-            HC.enterWithoutInput = true;
-
             GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
+            {
+                IsFirstLevelForPlayer = false,
+                SceneName = "GG_Workshop",
+                HeroLeaveDirection = GlobalEnums.GatePosition.unknown,
+                EntryGateName = "left1",
+                PreventCameraFadeOut = false,
+                WaitForSceneTransitionCameraFade = true,
+                Visualization = GameManager.SceneLoadVisualizations.Default,
+                AlwaysUnloadUnusedAssets = false
+            });
+
+            yield return new WaitForFinishedEnteringScene();
+            yield return new WaitForSceneLoadFinish();
+            yield return new WaitUntil(() => HeroController.instance.acceptingInput);
+            HeroController.instance.transform.position = OldPosition;
+            //var HC = HeroController.instance;
+            //var pd = PlayerData.instance;
+            //GameManager.instance.gameMap.GetComponent<GameMap>().SetDoorValues(OldPosition.x, OldPosition.y,"GG_WorkShop",MapZone);
+            //pd.gMap_doorX =OldPosition.x;
+           // pd.gMap_doorY = OldPosition.y;
+
+            //HC.RelinquishControl();
+            //HC.StopAnimationControl();
+            //HC.enterWithoutInput = true;
+
+            /*GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
                 SceneName = "GG_Workshop",
                 EntryDelay = 0,
@@ -377,7 +386,7 @@ namespace Easier_Pantheon_Practice
             });
             yield return new WaitForFinishedEnteringScene();
             HC.RegainControl();
-            HC.StartAnimationControl();
+            HC.StartAnimationControl();*/
 
         }
         
@@ -424,7 +433,7 @@ namespace Easier_Pantheon_Practice
             loop = false;
             orig(self);
         }
-        private bool DoesDictContain(string KeyToSearch)
+        private static bool DoesDictContain(string KeyToSearch)
         {
             return Exceptions_BossSceneName.Contains(KeyToSearch) || _BossSceneName.ContainsKey(KeyToSearch) ||
                    SemiExceptions_BossSceneName.ContainsKey(KeyToSearch);

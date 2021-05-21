@@ -10,7 +10,7 @@ namespace Easier_Pantheon_Practice
         internal static EasierPantheonPractice Instance;
 
         public EasierPantheonPractice() : base("Easier Pantheon Practice") { }
-        public override string GetVersion() => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public override string GetVersion() => "1.0.6 - v1";
 
         public GlobalModSettings settings = new GlobalModSettings();
         public override ModSettings GlobalSettings
