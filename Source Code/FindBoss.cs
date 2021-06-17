@@ -1,14 +1,11 @@
+using System;
 using Modding;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using USceneManager = UnityEngine.SceneManagement.SceneManager;
 using UnityEngine;
 using System.Collections;
-using System.Linq;
-using HutongGames.PlayMaker;
 using UObject = UnityEngine.Object;
-using HutongGames.PlayMaker.Actions;
-using SFCore.Utils;
 
 
 
@@ -21,11 +18,11 @@ namespace Easier_Pantheon_Practice
         public static bool altered, SOB;                        //to allow some functions to be readable
         private static bool loop;
         private static string PreviousScene, SceneToLoad;
-        private string MapZone;
+        private static string MapZone;
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
 
-        private readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
+        private static readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
         {
             { 0 , new List<float>{11f,36.4f } },//bench
             { 1 , new List<float>{207f,6.4f } },//gpz
@@ -107,17 +104,25 @@ namespace Easier_Pantheon_Practice
 
         public void Awake()
         {
-            TryKeys(); 
+            EasierPantheonPractice.Instance.Log("Component added");
         }
 
         private void Start()
         {
-            ModHooks.Instance.BeforeSceneLoadHook += BeforeSceneChange;
+            ModHooks.BeforeSceneLoadHook += BeforeSceneChange;
             USceneManager.sceneLoaded += SceneManager_sceneLoaded;
             On.BossSceneController.DoDreamReturn += DoDreamReturn;
-            ModHooks.Instance.HeroUpdateHook += HotKeys;
-            ModHooks.Instance.TakeHealthHook += Only1Damage;
+            if (EasierPantheonPractice.GlobalSaveData.allow_reloads_in_loads)
+            {
+                GameManager.instance.gameObject.AddComponent<HotkeysDuringLoad>();
+            }
+            else
+            {
+                ModHooks.HeroUpdateHook += HeroUpdateFunction;
+            }
+            ModHooks.AfterTakeDamageHook += Only1Damage;
         }
+
 
         private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
@@ -127,15 +132,19 @@ namespace Easier_Pantheon_Practice
                 if (PreviousScene != "GG_Workshop") return;
             }
             
+            
             altered = false;
             SOB = true;
             CurrentBoss = CurrentBoss_1 = ""; 
 
-            ReflectionHelper.GetField(typeof(BossSequenceController), "bossIndex", false).SetValue(null, 1);
-            
+
             if (DoesDictContain(arg0.name))
             {
                 StartCoroutine(ApplySettings());
+
+                if (EasierPantheonPractice.GlobalSaveData.only_apply_settings) return;
+                
+                SceneToLoad = arg0.name;
                 MapZone = GameManager.instance.GetCurrentMapZone();
                 if (Exceptions_BossSceneName.Contains(arg0.name))
                 {
@@ -163,6 +172,7 @@ namespace Easier_Pantheon_Practice
                     }
                     p5Boss();
                 }
+                
             }
         }
 
@@ -173,8 +183,10 @@ namespace Easier_Pantheon_Practice
             //Thank you to redfrog for this non-cursed code (before it was a while loop which didnt make sense)
             if (wait) yield return new WaitUntil(() => GameObject.Find(BossName));
             GameObject.Find(BossName).AddComponent<BossNerf>();
+
+            
         }
-        
+
         private void p5Boss()
         {
             StartCoroutine(ChangeBoss(CurrentBoss));
@@ -216,9 +228,7 @@ namespace Easier_Pantheon_Practice
         {
             //waiting
             yield return new WaitForFinishedEnteringScene();
-            
-            var instance = EasierPantheonPractice.Instance;
-            var settings = instance.settings;
+            var settings = EasierPantheonPractice.GlobalSaveData;
             var BSC = BossSceneController.Instance;
             var HC = HeroController.instance;
 
@@ -226,7 +236,7 @@ namespace Easier_Pantheon_Practice
             //remove health and add lifeblood
             if (!(settings.hitless_practice||BSC.BossLevel == 2))//checks for hitless practice or radiant fights
             {
-                HC.TakeHealth(BSC.BossLevel == 0 ? settings.remove_health : 2 * settings.remove_health);
+                HC.TakeHealth(settings.remove_health);
 
                 for (int lifeblood_increment = 0; lifeblood_increment < settings.lifeblood; lifeblood_increment++)
                     EventRegister.SendEvent("ADD BLUE HEALTH");
@@ -240,87 +250,76 @@ namespace Easier_Pantheon_Practice
             HeroController.instance.AddMPCharge(1);
             HeroController.instance.AddMPCharge(-1);
         }
-        private static int Only1Damage(int damage)
+        
+        private static int Only1Damage(int hazardType, int damage)
         {
+            if (EasierPantheonPractice.GlobalSaveData.only_apply_settings) return damage;
             if (!(loop||(DoesDictContain(GameManager.instance.GetSceneNameString()) && PreviousScene == "GG_Workshop"))) return damage;
             damage_to_be_dealt = BossSceneController.Instance.BossLevel == 1 ? (damage / 2) : damage;
 
-            if (EasierPantheonPractice.Instance.settings.hitless_practice) damage_to_be_dealt = 1000;
+            if (EasierPantheonPractice.GlobalSaveData.hitless_practice) damage_to_be_dealt = 1000;
 
             return damage_to_be_dealt;
         }
 
         #endregion
 
-
         #region hotkeys
 
-        public void HotKeys()
+        public void HeroUpdateFunction() => Hotkeys();
+
+        public static void Hotkeys()
         {
-            var settings = EasierPantheonPractice.Instance.settings;
+            var settings = EasierPantheonPractice.GlobalSaveData;
             var HC = HeroController.instance;
-            
-            
+
+
             string theCurrentScene = GameManager.instance.GetSceneNameString();
 
-            if (settings.Key_return_to_hog != "")
+
+            //if (Input.GetKeyDown(settings.Key_return_to_hog))
+            if (settings.keybinds.Key_return_to_hog.WasPressed)
             {
-                if (Input.GetKeyDown(settings.Key_return_to_hog))
+                if (HC.acceptingInput)
                 {
-                    if (HC.acceptingInput)
+                    if (loop || (DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
                     {
-                        if (loop||(DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
-                        {
-                            StartCoroutine(LoadWorkshop());
-                        }
+                        GameManager.instance.StartCoroutine(LoadWorkshop());
                     }
                 }
             }
 
-            if (settings.Key_teleport_around_HoG != "")
+            //if (Input.GetKeyDown(settings.Key_teleport_around_HoG))
+            if (settings.keybinds.Key_teleport_around_HoG.WasPressed)
             {
-                if (Input.GetKeyDown(settings.Key_teleport_around_HoG))
+                if (theCurrentScene == "GG_Workshop")
                 {
-                    if (theCurrentScene == "GG_Workshop")
-                    {
-                        current_move++;
-                        PosToMove.Set(MoveAround[current_move % 2][x_value], MoveAround[current_move % 2][y_value], 0f);
-                        HC.transform.position = PosToMove;
-                    }
+                    current_move++;
+                    PosToMove.Set(MoveAround[current_move % 2][x_value], MoveAround[current_move % 2][y_value], 0f);
+                    HC.transform.position = PosToMove;
                 }
             }
 
-            if (settings.Key_Reload_Boss != "")
+
+            //if (Input.GetKeyUp(settings.Key_Reload_Boss))
+            if (settings.keybinds.Key_Reload_Boss.WasPressed)
             {
-                if (Input.GetKeyUp(settings.Key_Reload_Boss))
+                if (loop || (DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
                 {
-                    if (HC.acceptingInput)
-                    {
-                        if (loop || (DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
-                        {
-                            LoadBossInLoop();
-                        }
-                    }
+                    LoadBossInLoop();
                 }
             }
         }
-        
-        public void LoadBossScene()
+
+        public static void LoadBossScene()
         {
             var HC = HeroController.instance;
             var GM = GameManager.instance;
-            GameObject Inspect = EasierPantheonPractice.PreloadedObjects["Inspect"];
-            
+
             //Copy paste of the FSM that loads a boss from HoG
             PlayerData.instance.dreamReturnScene = "GG_Workshop";
             PlayMakerFSM.BroadcastEvent("BOX DOWN DREAM");
             PlayMakerFSM.BroadcastEvent("CONVO CANCEL");
-            var Transition = Inspect.LocateMyFSM("GG Boss UI").GetAction<CreateObject>("Transition", 0).gameObject;
-
-            foreach (var FSMObject in Transition.Value.GetComponentsInChildren<PlayMakerFSM>())
-            {
-                FSMObject.SendEvent("GG TRANSITION OUT");
-            }
 
             HC.ClearMPSendEvents();
             GM.TimePasses();
@@ -336,10 +335,10 @@ namespace Easier_Pantheon_Practice
                 Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
                 PreventCameraFadeOut = true
             });
-            StartCoroutine(FixSoul());
+            GameManager.instance.StartCoroutine(FixSoul());
         }
 
-        private IEnumerator FixSoul()
+        private static IEnumerator FixSoul()
         {
             yield return new WaitForFinishedEnteringScene();
             yield return null;
@@ -348,82 +347,41 @@ namespace Easier_Pantheon_Practice
             HeroController.instance.AddMPCharge(-1);
         }
 
-        private IEnumerator LoadWorkshop()
+        private static IEnumerator LoadWorkshop()
         {
             loop = false;
             GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
-                IsFirstLevelForPlayer = false,
                 SceneName = "GG_Workshop",
-                HeroLeaveDirection = GlobalEnums.GatePosition.unknown,
+                EntryDelay = 0,
+                PreventCameraFadeOut = true,
                 EntryGateName = "left1",
-                PreventCameraFadeOut = false,
-                WaitForSceneTransitionCameraFade = true,
-                Visualization = GameManager.SceneLoadVisualizations.Default,
-                AlwaysUnloadUnusedAssets = false
+                Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory, 
             });
-
             yield return new WaitForFinishedEnteringScene();
             yield return new WaitForSceneLoadFinish();
             yield return new WaitUntil(() => HeroController.instance.acceptingInput);
             HeroController.instance.transform.position = OldPosition;
-            //var HC = HeroController.instance;
-            //var pd = PlayerData.instance;
-            //GameManager.instance.gameMap.GetComponent<GameMap>().SetDoorValues(OldPosition.x, OldPosition.y,"GG_WorkShop",MapZone);
-            //pd.gMap_doorX =OldPosition.x;
-           // pd.gMap_doorY = OldPosition.y;
-
-            //HC.RelinquishControl();
-            //HC.StopAnimationControl();
-            //HC.enterWithoutInput = true;
-
-            /*GameManager.instance.BeginSceneTransition(new GameManager.SceneLoadInfo
-            {
-                SceneName = "GG_Workshop",
-                EntryDelay = 0,
-                PreventCameraFadeOut = true,
-                Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
-            });
-            yield return new WaitForFinishedEnteringScene();
-            HC.RegainControl();
-            HC.StartAnimationControl();*/
-
         }
         
         #endregion
 
-        public void LoadBossInLoop()
+        public static void LoadBossInLoop()
         {
-            SceneToLoad = GameManager.instance.GetSceneNameString();
             loop = true;
             LoadBossScene();
         }
-        private void OnDestroy()
-        {
-            ModHooks.Instance.BeforeSceneLoadHook -= BeforeSceneChange;
-            USceneManager.sceneLoaded -= SceneManager_sceneLoaded;
-            On.BossSceneController.DoDreamReturn -= DoDreamReturn;
-            ModHooks.Instance.HeroUpdateHook -= HotKeys;
-        }
-            
+
         #region Misc Functions
 
-        private void TryKeys()
-        {
-            // checks if all the binded keys in settings file is actually an input. if not then clears the bind
-            var settings = EasierPantheonPractice.Instance.settings;
-            
-            try {Input.GetKeyDown(settings.Key_return_to_hog);}
-            catch {settings.Key_return_to_hog = "";}
-            try {Input.GetKeyDown(settings.Key_Reload_Boss);}
-            catch {settings.Key_Reload_Boss = "";}
-            try {Input.GetKeyDown(settings.Key_teleport_around_HoG);}
-            catch {settings.Key_teleport_around_HoG = "";}
-        }
+        
         private string BeforeSceneChange(string sceneName)
         {
             PreviousScene = GameManager.instance.sceneName;
-            if (PreviousScene == "GG_Workshop") OldPosition = HeroController.instance.transform.position;
+            if (PreviousScene == "GG_Workshop")
+            {
+                OldPosition = HeroController.instance.transform.position;
+            }
             return sceneName;
         }
 
@@ -443,6 +401,24 @@ namespace Easier_Pantheon_Practice
         
         
         #endregion
-            
+        
+        private void OnDestroy()
+        {
+            ModHooks.BeforeSceneLoadHook -= BeforeSceneChange;
+            USceneManager.sceneLoaded -= SceneManager_sceneLoaded;
+            On.BossSceneController.DoDreamReturn -= DoDreamReturn;
+            ModHooks.AfterTakeDamageHook -= Only1Damage;
+            ModHooks.HeroUpdateHook -= HeroUpdateFunction;
+            var hotkeysComponent = GameManager.instance?.gameObject.GetComponent<HotkeysDuringLoad>();
+            if (hotkeysComponent != null) Destroy(hotkeysComponent);
+        }
+    }
+//make a new monobehaviour for a very rare option so it isnt added if not needed.
+    public class HotkeysDuringLoad : MonoBehaviour
+    {
+        public void Update()
+        {
+            FindBoss.Hotkeys();
+        }
     }
 }

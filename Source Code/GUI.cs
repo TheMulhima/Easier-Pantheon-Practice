@@ -4,6 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using Modding;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using Modding.Menu;
+using Modding.Menu.Config;
+using UnityEngine;
+using UnityEngine.UI;
+using Patch = Modding.Patches;
+
+
+//TODO Add Hide UI option
+
 
 namespace Easier_Pantheon_Practice
 {
@@ -12,18 +22,20 @@ namespace Easier_Pantheon_Practice
         public GUIStyle Default_Label, Default_Button;
         private static bool checking_for_bind;
         private static string looking_for_input, current_setting;
-        private const int width = 375, height = 375;
+        private const int buffer = 50;
+        private const int width = 230, heighta1 = 155, heighta2 = 125, height = 285;
+        private const int widtha1 = 150, widtha2 = 30 ,widtha3 = 50 ;
         
         private void Awake()
         {
             checking_for_bind = false;//makes sure it doesnt directly start looking for input when GUI is activated
         }
-
+        
         public void OnGUI()
         {
             var gm = GameManager.instance;
             var instance = EasierPantheonPractice.Instance;
-            var settings = instance.settings;
+            var settings = EasierPantheonPractice.settings;
             
             //only want it to show in pause menu, in HoG and not when looking for input
             if (!gm.isPaused) return;
@@ -32,60 +44,135 @@ namespace Easier_Pantheon_Practice
 
             Default_Label = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 24,
+                fontSize = 20,
                 alignment = TextAnchor.MiddleCenter,
             };
             Default_Button = new GUIStyle(GUI.skin.button)
             {
-                fontSize = 24,
+                fontSize = 20,
                 alignment = TextAnchor.MiddleCenter,
             };
 
             GUI.contentColor = Color.white;
             GUI.skin.font.name = "TrajanBold";
+
+            if (!settings.ShowUI) return;
+            GUILayout.BeginArea(new Rect(Screen.width - (width + buffer), Screen.height - (heighta1 + heighta2 + 20),
+                widtha1, heighta1));
             
-            GUILayout.BeginArea(new Rect(Screen.width - (width + 20), Screen.height - (Screen.height/2 > height ? Screen.height/2: height + 20), width, height));
-            
-            GUILayout.Label("Easier Pantheon Practice",Default_Label);
             GUI.contentColor = Color.gray;
             GUILayout.Label("Settings",Default_Label);
             GUI.contentColor = Color.white;
-            GUI.skin.button.onHover.textColor = Color.grey;
-            if (GUILayout.Button($"Remove Health: {settings.remove_health}", Default_Button))
+            
+            GUILayout.Label("Remove Health",Default_Label);
+            GUILayout.Label("Lifeblood",Default_Label);
+            GUILayout.Label("Soul",Default_Label);
+            GUILayout.Label("Hitless Practice}",Default_Label);
+            
+            GUILayout.EndArea();
+
+            GUILayout.BeginArea(new Rect(Screen.width - (width - widtha1 + buffer), Screen.height - (heighta1+heighta2 + 20), widtha2, heighta1));
+            
+            GUILayout.Label("",Default_Label);
+
+            GUI.backgroundColor = new Color(249, 249, 249);
+            if (GUILayout.Button("-", Default_Button))
             {
-                settings.remove_health++;
-                if (settings.remove_health >= PlayerData.instance.maxHealth) settings.remove_health = 0;
+                if (settings.remove_health > 0) settings.remove_health--;
             }
-            if (GUILayout.Button($"Lifeblood: {settings.lifeblood}", Default_Button))
+            if (GUILayout.Button("-", Default_Button))
             {
-                settings.lifeblood++;
-                if (settings.lifeblood > 10) settings.lifeblood = 0;
+                if (settings.lifeblood > 0) settings.lifeblood--;
             }
-            if (GUILayout.Button($"Soul: {settings.soul}", Default_Button))
+            if (GUILayout.Button("-", Default_Button))
             {
-                settings.soul += 33;
-                if (settings.soul > 198) settings.soul = 0;
+                if (settings.soul >= 33) settings.soul -= 33;
             }
-            if (GUILayout.Button($"Hitless Practice: {settings.hitless_practice}", Default_Button))
+            if (GUILayout.Button("-", Default_Button))
             {
-                settings.hitless_practice = !settings.hitless_practice;
+                settings.hitless_practice = false;
             }
+            GUILayout.EndArea();
+
+            GUILayout.BeginArea(new Rect(Screen.width - (width -widtha1-widtha2 + buffer), Screen.height - (heighta1+heighta2 + 20), widtha3, heighta1));
+            
+            GUI.contentColor = Color.gray;
+            GUILayout.Label("",Default_Label);
+            GUI.contentColor = Color.white;
+            
+            GUILayout.Label(settings.remove_health.ToString(), Default_Label);
+            GUILayout.Label(settings.lifeblood.ToString(), Default_Label);
+            GUILayout.Label(settings.soul.ToString(), Default_Label);
+            GUILayout.Label(settings.hitless_practice.ToString(), Default_Label);
+            
+            GUILayout.EndArea();
+
+            GUILayout.BeginArea(new Rect(Screen.width - (width -widtha1-widtha2-widtha3 + buffer), Screen.height - (heighta1+heighta2 + 20), widtha2, heighta1));
+            
+            GUILayout.Label("",Default_Label);
+
+            if (GUILayout.Button("+", Default_Button))
+            {
+                if (settings.remove_health < PlayerData.instance.maxHealth - 1) settings.remove_health++;
+            }
+            if (GUILayout.Button("+", Default_Button))
+            {
+                if (settings.lifeblood < 10) settings.lifeblood++;
+            }
+            if (GUILayout.Button("+", Default_Button))
+            {
+                if (settings.soul < 198) settings.soul += 33;
+            }
+            if (GUILayout.Button("+", Default_Button))
+            {
+                settings.hitless_practice = true;
+            }
+            GUILayout.EndArea();
+            
+            
+            GUILayout.BeginArea(new Rect(Screen.width - (width + buffer), Screen.height - (heighta2 + 15),
+                widtha1, heighta2));
+            
             GUI.contentColor = Color.gray;
             GUILayout.Label("KeyBinds",Default_Label);
             GUI.contentColor = Color.white;
-            if (GUILayout.Button($"Key: Return to HOG: {PrintSetting(settings.Key_return_to_hog)}", Default_Button))
+            
+            GUILayout.Label($"Return to HOG", Default_Label);
+            GUILayout.Label($"Reload Boss", Default_Label);
+            GUILayout.Label($"Teleport in HoG", Default_Label);
+            
+            GUILayout.EndArea();
+            
+            GUILayout.BeginArea(new Rect(Screen.width - (width -widtha1 + buffer), Screen.height - (heighta2 + 15), widtha2, heighta2));
+
+            GUILayout.Label("",Default_Label);
+            
+            GUILayout.Label(PrintSetting(settings.Key_return_to_hog), Default_Label);
+            GUILayout.Label(PrintSetting(settings.Key_Reload_Boss), Default_Label);
+            GUILayout.Label(PrintSetting(settings.Key_teleport_around_HoG), Default_Label);
+            
+            GUILayout.EndArea();
+            
+            
+            GUILayout.BeginArea(new Rect(Screen.width - (width -widtha1-widtha2 + buffer), Screen.height - (heighta2 + 15), widtha2 + widtha3, heighta2));
+
+            GUILayout.Label("",Default_Label);
+
+            if (GUILayout.Button("Bind", Default_Button))
             {
                 Keybind("Key: Return to HOG");
             }
-            if (GUILayout.Button($"Key: Reload Boss: {PrintSetting(settings.Key_Reload_Boss)}", Default_Button))
+            if (GUILayout.Button("Bind", Default_Button))
             {
                 Keybind("Key: Reload Boss");
             }
-            if (GUILayout.Button($"Key: Teleport Around HOG: {PrintSetting(settings.Key_teleport_around_HoG)}", Default_Button))
+            if (GUILayout.Button("Bind", Default_Button))
             {
                 Keybind("Key: Teleport Around HOG");
             }
+            
             GUILayout.EndArea();
+            
         }
 
         private string PrintSetting(string current_key_bind) => current_key_bind == "" ? "None" : current_key_bind;
@@ -97,186 +184,63 @@ namespace Easier_Pantheon_Practice
             current_setting = the_current_setting;
             checking_for_bind = true;//removes the GUI to avoid confusion
         }
-        
-        //list of keys that can be inputted, its not a full list but i hope its enough
-        private List<string> Keys = new List<string>()
-        {
-            "backspace",
-            "delete",
-            "tab",
-            "clear",
-            "return",
-            "pause",
-            "space",
-            "up",
-            "down",
-            "right",
-            "left",
-            "insert",
-            "home",
-            "end",
-            "page up",
-            "page down",
-            "f1",
-            "f2",
-            "f3",
-            "f4",
-            "f5",
-            "f6",
-            "f7",
-            "f8",
-            "f9",
-            "f10",
-            "f11",
-            "f12",
-            "f13",
-            "f14",
-            "f15",
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "!",
-            "\"",
-            "#",
-            "$",
-            "&",
-            "'",
-            "(",
-            ")",
-            "*",
-            "+",
-            ",",
-            "-",
-            ".",
-            "/",
-            ":",
-            ";",
-            "<",
-            "=",
-            ">",
-            "?",
-            "@",
-            "[",
-            "\\",
-            "]",
-            "^",
-            "_",
-            "`",
-            "a",
-            "b",
-            "c",
-            "d",
-            "e",
-            "f",
-            "g",
-            "h",
-            "i",
-            "j",
-            "k",
-            "l",
-            "m",
-            "n",
-            "o",
-            "p",
-            "q",
-            "r",
-            "s",
-            "t",
-            "u",
-            "v",
-            "w",
-            "x",
-            "y",
-            "z",
-            "numlock",
-            "caps lock",
-            "scroll lock",
-            "right shift",
-            "left shift",
-            "right ctrl",
-            "left ctrl",
-            "right alt",
-            "left alt",
-            "[0]",
-            "[1]",
-            "[2]",
-            "[3]",
-            "[4]",
-            "[5]",
-            "[6]",
-            "[7]",
-            "[8]",
-            "[9]",
-            "[+]",
-            "[-]",
-            "[*]",
-            "[/]",
-            "[.]",
-            "mouse 0",
-            "mouse 1",
-            "mouse 2",
-        };
-
         public void Update()
         {
-            var settings = EasierPantheonPractice.Instance.settings;
+            var settings = EasierPantheonPractice.settings;
             if (!checking_for_bind) return;
 
-            //make esc key remove a bind (also makes sure pause isnt bound to a key becuase that would cause problems
-            if (Input.GetKeyDown("escape"))
+            foreach (KeyCode keypress in Enum.GetValues(typeof(KeyCode)))
             {
-                looking_for_input = "";
-                switch (current_setting)
-                {
-                    case "Key: Return to HOG":
-                        settings.Key_return_to_hog = looking_for_input;
-                        break;
-                    case "Key: Reload Boss":
-                        settings.Key_Reload_Boss = looking_for_input;
-                        break;
-                    case "Key: Teleport Around HOG":
-                        settings.Key_teleport_around_HoG = looking_for_input;
-                        break;
-                }
-
-                _textObj.text = "The key was unbound  ";
-                GameManager.instance.StartCoroutine(
-                    DeleteText("The key was unbound  "));
-                checking_for_bind = false;
-            }
-
-            foreach (string keypress in Keys)
-            {
+               
                 if (Input.GetKeyDown(keypress))
                 {
-                    looking_for_input = keypress;
-
-                    Input.GetKeyDown(looking_for_input);
-                    switch (current_setting)
+                    //make esc key remove a bind (also makes sure pause isnt bound to a key becuase that would cause problem
+                    if (keypress == KeyCode.Escape)
                     {
-                        case "Key: Return to HOG":
-                            settings.Key_return_to_hog = looking_for_input;
-                            break;
-                        case "Key: Reload Boss":
-                            settings.Key_Reload_Boss = looking_for_input;
-                            break;
-                        case "Key: Teleport Around HOG":
-                            settings.Key_teleport_around_HoG = looking_for_input;
-                            break;
+                        if (Input.GetKeyDown(KeyCode.Escape))
+                        {
+                            looking_for_input = "";
+                            switch (current_setting)
+                            {
+                                case "Key: Return to HOG":
+                                    settings.Key_return_to_hog = looking_for_input;
+                                    break;
+                                case "Key: Reload Boss":
+                                    settings.Key_Reload_Boss = looking_for_input;
+                                    break;
+                                case "Key: Teleport Around HOG":
+                                    settings.Key_teleport_around_HoG = looking_for_input;
+                                    break;
+                            }
+
+                            _textObj.text = "The key was unbound  ";
+                            GameManager.instance.StartCoroutine(
+                                DeleteText("The key was unbound  "));
+                            checking_for_bind = false;
+                        }
                     }
+                    else
+                    {
+                        looking_for_input = Enum.GetName(typeof(KeyCode), keypress);
 
-                    _textObj.text = $"The binding for {current_setting} is {looking_for_input} ";
-                    GameManager.instance.StartCoroutine(
-                        DeleteText($"The binding for {current_setting} is {looking_for_input} "));
-                    checking_for_bind = false;
+                        switch (current_setting)
+                        {
+                            case "Key: Return to HOG":
+                                settings.Key_return_to_hog = looking_for_input;
+                                break;
+                            case "Key: Reload Boss":
+                                settings.Key_Reload_Boss = looking_for_input;
+                                break;
+                            case "Key: Teleport Around HOG":
+                                settings.Key_teleport_around_HoG = looking_for_input;
+                                break;
+                        }
 
+                        _textObj.text = $"The binding for {current_setting} is {looking_for_input} ";
+                        GameManager.instance.StartCoroutine(
+                            DeleteText($"The binding for {current_setting} is {looking_for_input} "));
+                        checking_for_bind = false;
+                    }
                 }
             }
         }
@@ -296,8 +260,8 @@ namespace Easier_Pantheon_Practice
             (
                 _canvas,
                 "",
-                30,
-                TextAnchor.LowerRight,
+                20,
+                TextAnchor.LowerLeft,
                 new CanvasUtil.RectData
                 (
                     new Vector2(0, 50),
@@ -319,5 +283,16 @@ namespace Easier_Pantheon_Practice
             yield return new WaitForSecondsRealtime(3f);
             if (_textObj.text == calling_text) _textObj.text = "";
         }
+
+        public void OnDestroy()
+        {
+            UnityEngine.Object.Destroy(_canvas);
+            UnityEngine.Object.Destroy(_textObj);
+        }
+    }
+
+    internal class ModMenu
+    {
+        private MenuScreen screen;
     }
 }

@@ -1,101 +1,205 @@
 ﻿using Modding;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
+using USceneManager = UnityEngine.SceneManagement.SceneManager;
+using Modding.Menu;
+using Modding.Menu.Config;
 
 namespace Easier_Pantheon_Practice
 {
-    public class EasierPantheonPractice : Mod
+    public class EasierPantheonPractice : Mod,ITogglableMod, IGlobalSettings<GlobalSettings>,ICustomMenuMod
     {
-        internal static EasierPantheonPractice Instance;
-
         public EasierPantheonPractice() : base("Easier Pantheon Practice") { }
-        public override string GetVersion() => "1.0.6 - v1";
+        public override string GetVersion() => "1.0.7";
 
-        public GlobalModSettings settings = new GlobalModSettings();
-        public override ModSettings GlobalSettings
-        {
-            get => settings;
-            set => settings = (GlobalModSettings) value;
+         public MenuScreen GetMenuScreen(MenuScreen modListMenu) 
+         {
+             string[] maskvalues = new string[11];
+             for (int i = 0; i < 10; i++)
+             {
+                 maskvalues[i] = i.ToString();
+             }
+             string[] soulvalues = new string[199];
+             for (int i = 0; i < 199; i++)
+             {
+                 soulvalues[i] = i.ToString();
+             }
+
+             string[] boolvalues = {"False", "True"};
+             
+                return new MenuBuilder(UIManager.instance.UICanvas.gameObject, "Menu")
+                    .CreateTitle("Easier Pantheon Practice Settings", MenuTitleStyle.vanillaStyle)
+                    .CreateContentPane(RectTransformData.FromSizeAndPos(
+                        new RelVector2(new Vector2(1920f, 903f)),
+                        new AnchoredPosition(
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0f, -60f)
+                        )
+                    ))
+                    .CreateControlPane(RectTransformData.FromSizeAndPos(
+                        new RelVector2(new Vector2(1920f, 259f)),
+                        new AnchoredPosition(
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0f, -502f)
+                        )
+                    ))
+                    .SetDefaultNavGraph(new ChainedNavGraph())
+                    .AddContent(
+                        RegularGridLayout.CreateVerticalLayout(105f),
+                        c =>
+                        {
+                            c.AddHorizontalOption(
+                                "RemoveHealth",
+                                new HorizontalOptionConfig
+                                {
+                                    Label = "Remove Health",
+                                    Options = maskvalues,
+                                    ApplySetting = (_, i) =>
+                                    {
+                                        GlobalSaveData.remove_health = i;
+                                    },
+                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(GlobalSaveData.remove_health),
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                    Style = HorizontalOptionStyle.VanillaStyle
+                                }).AddHorizontalOption(
+                                "Lifeblood",
+                                new HorizontalOptionConfig
+                                {
+                                    Label = "Lifeblood",
+                                    Options = maskvalues,
+                                    ApplySetting = (_, i) =>
+                                    {
+                                        GlobalSaveData.lifeblood = i;
+                                    },
+                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(GlobalSaveData.lifeblood),
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                    Style = HorizontalOptionStyle.VanillaStyle
+                                }).AddHorizontalOption(
+                                "Soul",
+                                new HorizontalOptionConfig
+                                {
+                                    Label = "Soul",
+                                    Options = soulvalues,
+                                    ApplySetting = (_, i) =>
+                                    {
+                                        GlobalSaveData.soul = i;
+                                    },
+                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(GlobalSaveData.soul),
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                    Style = HorizontalOptionStyle.VanillaStyle
+                                }).AddHorizontalOption(
+                                "HitlessPractice",
+                                new HorizontalOptionConfig
+                                {
+                                    Label = "Hitless Practice",
+                                    Options = boolvalues,
+                                    ApplySetting = (_, i) =>
+                                    {
+                                        GlobalSaveData.hitless_practice = i != 0;
+                                    },
+                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(GlobalSaveData.hitless_practice ? 1:0),
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                    Style = HorizontalOptionStyle.VanillaStyle
+                                },
+                                out var MainOptions);
+                            c.AddKeybind(
+                                "ReloadBossBind",
+                                GlobalSaveData.keybinds.Key_Reload_Boss,
+                                new KeybindConfig
+                                {
+                                    Label = "Reload Boss",
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu)
+                                }
+                            ).AddKeybind(
+                                "ReturnToHoGBind",
+                                GlobalSaveData.keybinds.Key_return_to_hog,
+                                new KeybindConfig
+                                {
+                                    Label = "Return To HoG",
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu)
+                                }
+                            ).AddKeybind(
+                                "TeleportAroundHoGBind",
+                                GlobalSaveData.keybinds.Key_teleport_around_HoG,
+                                new KeybindConfig
+                                {
+                                    Label = "Teleport Around HoG",
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu)
+                                }
+                            );
+                        }
+                    )
+                    .AddControls(
+                        new SingleContentLayout(new AnchoredPosition(
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0f, -64f)
+                        )),
+                        c => c.AddMenuButton(
+                            "BackButton",
+                            new MenuButtonConfig {
+                                Label = "Back",
+                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                SubmitAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                Style = MenuButtonStyle.VanillaStyle,
+                                Proceed = true
+                            }
+                        )
+                    )
+                    .Build();
         }
+         
+         public static GlobalSettings GlobalSaveData { get; set; } = new GlobalSettings();
+         public void OnLoadGlobal(GlobalSettings s) => EasierPantheonPractice.GlobalSaveData = s;
+         public GlobalSettings OnSaveGlobal() => EasierPantheonPractice.GlobalSaveData;
 
-        public static readonly Dictionary<string, GameObject> PreloadedObjects = new Dictionary<string, GameObject>();
-        public override List<(string, string)> GetPreloadNames()
-        {
-            return new List<(string, string)>
-            {
-                ("GG_Workshop", "GG_Statue_Hornet/Inspect"),//need this for reload boss feature
-            };
-        }
-
-        public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
+        
+        internal static EasierPantheonPractice Instance;
+        
+        public override void Initialize()
         {
             Instance = this;
-            PreloadedObjects.Add("Inspect", preloadedObjects["GG_Workshop"]["GG_Statue_Hornet/Inspect"]);
+            Log("Trying to load mod");
+
+            Load_Mod();
             
-            ModHooks.Instance.AfterSavegameLoadHook += Load_Save;
-            ModHooks.Instance.NewGameHook += Load_Easier_Ascended; 
-            ModHooks.Instance.LanguageGetHook += BossDesc;
+            ModHooks.SavegameLoadHook += Load_Save;
+            ModHooks.NewGameHook += Load_Mod;
+            ModHooks.LanguageGetHook += BossDesc;
         }
 
-        private string BossDesc(string key, string sheet)
+        private bool BossDesc(string key, string sheettitle, string orig, string current, out string res)
         {
             switch (key)
             {
-                case "CHALLENGE_UI_LEVEL2": return "P5 PRACTICE";
-                case "CHALLENGE_UI_LEVEL1": return "P1-4 PRACTICE";
+                case "CHALLENGE_UI_LEVEL2":
+                    res = "P5 PRACTICE";
+                    return true;
+                case "CHALLENGE_UI_LEVEL1":
+                    res =  "P1-4 PRACTICE";
+                    return true;
             }
-
-            #region for the trolls
-            if (settings.funny_descriptions)
-            {
-                switch (key)
-                {
-                    case "NAME_MEGA_MOSS_CHARGER": return "UNKILLABLE MOSS CHARGER";
-                    case "GG_S_MEGAMOSS":          return "The True Champion of the Gods. Try as hard as you want, you can not kill it";
-                    case "MEGA_MOSS_SUPER":        return "UNKILLABLE";
-                    case "MEGA_MOSS_SUB":          return "THE TRUE CHAMPION OF THE GODS";
-
-                    case "GG_S_GRUZ":              return "My head hurts. Please dont make me slam my head again";
-                    case "GG_S_BIGBUZZ":           return "Vicious God of running away";
-                    case "GG_S_FLUKEMUM":          return "Alluring God of standing still";
-                    case "GG_S_BIGBEES":           return "Gods of RNG";
-                    case "GG_S_NOSK_HORNET":       return "Vicious God of running away, but worse";
-                    case "GG_S_COLLECTOR":         return "The boss that gives nightmares to All Binding players";
-                    case "GG_S_MIGHTYZOTE":        return "I like giving ear aches";
-                    case "KNIGHT_STATUE_1":        
-                    case "KNIGHT_STATUE_2":        
-                    case "KNIGHT_STATUE_3":        return "Did you really just spend all these hours grinding just to get this??";
-                    case "GG_S_RADIANCE":          return "I'm the god of light and you insult me by referring to me as a tiny moth??";
-                    case "GG_S_SLY":               return "Bug Yoda";
-                    case "GG_S_GHOST_HU":          return "I love PANCAKES";
-                    case "GG_S_GHOST_GORB":        return "Ascend with Gorb";
-                    case "GG_S_SOULMASTER":        return "Teleporting freak";
-                    case "GG_S_SOUL_TYRANT":       return "Teleporting freak v2";
-                    case "GG_S_MAGEKNIGHT":        return "Am i really a boss?";
-                    case "CHARM_NAME_2":           return "OP Compass";
-                    case "CHARM_DESC_2":           return "Its the most OP charm in the game.<br><br>Wear this charm to get good";
-                }
-                
-            }
-            #endregion
-            
-            return Language.Language.GetInternal(key, sheet);
+            res = current;
+            return true;
         }
 
-        private void Load_Easier_Ascended()
+        private void Load_Mod()
         {
-            GameManager.instance.gameObject.AddComponent<FindBoss>();
-            
-            //honestly not sure why i added this because GUI > setting file. but its there if someone wants it
-            if (!settings.remove_ingame_menu)
-            {
-                GameManager.instance.gameObject.AddComponent<GUIForSettings>();
-            }
+            var MainComponent = GameManager.instance.gameObject.GetComponent<FindBoss>();
+            if (MainComponent == null) GameManager.instance.gameObject.AddComponent<FindBoss>();
         }
-        private void Load_Save(SaveGameData data)
+        private void Load_Save(int obj)
         {
-            Load_Easier_Ascended();
+            Load_Mod();
+        }
+        public void Unload()
+        {
+            ModHooks.LanguageGetHook -= BossDesc;
+            
+            var MainComponent = GameManager.instance?.gameObject.GetComponent<FindBoss>();
+            if (MainComponent != null) UnityEngine.Object.Destroy(MainComponent);
+            
         }
     }
 }

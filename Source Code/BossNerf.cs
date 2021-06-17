@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -69,7 +70,6 @@ namespace Easier_Pantheon_Practice
         };
 
 
-
         private void Awake()
         {
             health = gameObject.GetComponent<HealthManager>();
@@ -90,11 +90,9 @@ namespace Easier_Pantheon_Practice
                 health.hp = Health_CurrentBoss_1[FindBoss.CurrentBoss_1];
                 if (!FindBoss.SOB) health.hp = 350;
             }
-
+            
             ChangeFSM();
-            BossSceneController.Instance.BossLevel = 0;
         }
-
 
         #region Changing FSMS
 

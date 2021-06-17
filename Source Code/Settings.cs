@@ -1,20 +1,29 @@
-﻿using Modding;
+﻿using InControl;
+using Modding;
 
 namespace Easier_Pantheon_Practice
 {
-    public class GlobalModSettings : ModSettings
+    public class GlobalSettings
     {
         public int remove_health = 0;
         public int lifeblood = 0;
         public int soul = 0;
         public bool hitless_practice = false;
 
-        public string Key_return_to_hog = "";
-        public string Key_teleport_around_HoG = "";
-        public string Key_Reload_Boss = "";
+        public KeyBinds keybinds = new KeyBinds();
+        
+        public bool only_apply_settings = false;
+        public bool allow_reloads_in_loads = false;
+    }
+    public class KeyBinds : PlayerActionSet {
+        public PlayerAction Key_return_to_hog;
+        public PlayerAction Key_teleport_around_HoG;
+        public PlayerAction Key_Reload_Boss;
 
-        public bool remove_ingame_menu = false;
-        public bool funny_descriptions = true;
-
+        public KeyBinds() {
+            Key_return_to_hog = CreatePlayerAction("Key_return_to_hog");
+            Key_teleport_around_HoG = CreatePlayerAction("Key_teleport_around_HoG");
+            Key_Reload_Boss = CreatePlayerAction("Key_Reload_Boss");
+        }
     }
 }

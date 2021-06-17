@@ -7,7 +7,7 @@ A mod that makes practicing in HoG easier. It adds many features some of them in
 - Download this mod, the Modding API and SFCore from the modinstaller.
 - To change the settings, pause the game in Hall of Gods and click on the buttons to increment the setting / bind a key. There isn't a way to decrement the counter so if you want to go back, just click on it until it turns to 0 (which will happen after it crosses the max value)
 - To practice a Pantheon 5 boss, fight ascended. To Practice a Pantheon 1-4 boss, fight attuned.  
-- If a key isn't registered using the GUI, go to the saves folder and add an [acceptable input](https://drive.google.com/file/d/1aebQ9DMngjk3ZO6x7XHk89D5I9q5armr/view?usp=sharing) in the respective keys to add a key bind. e.g.  `Key_Reload_Boss = "z"`.
+- If a key isn't registered using the GUI, go to the saves folder and add an [acceptable input](https://gist.github.com/TheMulhima/63a241194bfb95828ed6f46d9b09d449) in the respective keys to add a key bind. e.g.  `Key_Reload_Boss = "z"`.
 
 # Features Explanation
 ## Settings
@@ -24,12 +24,24 @@ A mod that makes practicing in HoG easier. It adds many features some of them in
 - Key_return_to_hog -> Equivalent to dream gateing but much faster and doesn't burn your eyes by showing a white screen.
 - Key_teleport_around_HoG -> Teleports you around HoG. It alternates between the bench and gpz statue.
 #### To unbind: Click on the button on the GUI then press esc key to close the pause menu.
+##Other Settings
+#### These are only found in the settings file which can be found in the [saves folder](https://github.com/TheMulhima/Speedrun-Tricks-Visual-Helper#saves-folder)
+- remove_ingame_menu -> if true, removes the GUI.<br />Maybe becuase it comes in the way idk. mostly keep it to false becuase GUI >>>> Settings file.
+- Dont_change_boss_health -> If you only want settings to be added <br />For example: to practice a modded boss
+- allow_reloads_in_loads -> Allows you to use reload boss key in loads. NOTE: May break stuff so use it at your own risk.
 
  # Common use cases:
 - Practice fighting in pantheons with **Fury of the Fallen**.
 - The hotkeys (especially the reload boss) can be used to lower waiting time in loading screens.
 - It can be used to practice specific bosses in P5 such as **Collector**. (also compatible with toggleable bindings mod for AB practice)
 - The hitless option allows practice for hitless pantheons.
+
+#Known Issues
+- Reloading boss before Pure vessels screams causes HUD to disappear (fix: reload).
+- Using allow reload during loads causes knight to be invisible for some time
+- Using allow reload during loads causes lifeblood to not apply
+- in absrad, remove_health doesnt work
+Note: IMO thats not a bug because you cant start Abs Rad without full health anyways (and this mod is meant to simulate pantheons in HoG). If you disagree, you can message me and ill try to fix it.
 
 # Other:
 - The mod only works in Hall of Gods and doesn't affect pantheons or other areas of the game.
@@ -40,4 +52,4 @@ A mod that makes practicing in HoG easier. It adds many features some of them in
 # Dependancies:
 - This mod depends on Modding API (Obviously) and SFCore.
 # Credits
-- Thank you to 56, RedFrog and SFGrenade for some of their code and zuiivel for their help.
+- Thank you to 56, RedFrog and SFGrenade for some of their code and zuiivel and nadva for their help.
