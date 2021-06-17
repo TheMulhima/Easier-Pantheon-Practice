@@ -57,9 +57,9 @@ namespace Easier_Pantheon_Practice
                                     Options = maskvalues,
                                     ApplySetting = (_, i) =>
                                     {
-                                        GlobalSaveData.remove_health = i;
+                                        settings.remove_health = i;
                                     },
-                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(GlobalSaveData.remove_health),
+                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.remove_health),
                                     CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
                                     Style = HorizontalOptionStyle.VanillaStyle
                                 }).AddHorizontalOption(
@@ -70,9 +70,9 @@ namespace Easier_Pantheon_Practice
                                     Options = maskvalues,
                                     ApplySetting = (_, i) =>
                                     {
-                                        GlobalSaveData.lifeblood = i;
+                                        settings.lifeblood = i;
                                     },
-                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(GlobalSaveData.lifeblood),
+                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.lifeblood),
                                     CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
                                     Style = HorizontalOptionStyle.VanillaStyle
                                 }).AddHorizontalOption(
@@ -83,9 +83,9 @@ namespace Easier_Pantheon_Practice
                                     Options = soulvalues,
                                     ApplySetting = (_, i) =>
                                     {
-                                        GlobalSaveData.soul = i;
+                                        settings.soul = i;
                                     },
-                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(GlobalSaveData.soul),
+                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.soul),
                                     CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
                                     Style = HorizontalOptionStyle.VanillaStyle
                                 }).AddHorizontalOption(
@@ -96,16 +96,16 @@ namespace Easier_Pantheon_Practice
                                     Options = boolvalues,
                                     ApplySetting = (_, i) =>
                                     {
-                                        GlobalSaveData.hitless_practice = i != 0;
+                                        settings.hitless_practice = i != 0;
                                     },
-                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(GlobalSaveData.hitless_practice ? 1:0),
+                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.hitless_practice ? 1:0),
                                     CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
                                     Style = HorizontalOptionStyle.VanillaStyle
                                 },
                                 out var MainOptions);
                             c.AddKeybind(
                                 "ReloadBossBind",
-                                GlobalSaveData.keybinds.Key_Reload_Boss,
+                                settings.keybinds.Key_Reload_Boss,
                                 new KeybindConfig
                                 {
                                     Label = "Reload Boss",
@@ -113,7 +113,7 @@ namespace Easier_Pantheon_Practice
                                 }
                             ).AddKeybind(
                                 "ReturnToHoGBind",
-                                GlobalSaveData.keybinds.Key_return_to_hog,
+                                settings.keybinds.Key_return_to_hog,
                                 new KeybindConfig
                                 {
                                     Label = "Return To HoG",
@@ -121,7 +121,7 @@ namespace Easier_Pantheon_Practice
                                 }
                             ).AddKeybind(
                                 "TeleportAroundHoGBind",
-                                GlobalSaveData.keybinds.Key_teleport_around_HoG,
+                                settings.keybinds.Key_teleport_around_HoG,
                                 new KeybindConfig
                                 {
                                     Label = "Teleport Around HoG",
@@ -150,9 +150,9 @@ namespace Easier_Pantheon_Practice
                     .Build();
         }
          
-         public static GlobalSettings GlobalSaveData { get; set; } = new GlobalSettings();
-         public void OnLoadGlobal(GlobalSettings s) => EasierPantheonPractice.GlobalSaveData = s;
-         public GlobalSettings OnSaveGlobal() => EasierPantheonPractice.GlobalSaveData;
+         public static GlobalSettings settings { get; set; } = new GlobalSettings();
+         public void OnLoadGlobal(GlobalSettings s) => EasierPantheonPractice.settings = s;
+         public GlobalSettings OnSaveGlobal() => EasierPantheonPractice.settings;
 
         
         internal static EasierPantheonPractice Instance;
@@ -177,9 +177,51 @@ namespace Easier_Pantheon_Practice
                     res = "P5 PRACTICE";
                     return true;
                 case "CHALLENGE_UI_LEVEL1":
-                    res =  "P1-4 PRACTICE";
+                    res = "P1-4 PRACTICE";
                     return true;
             }
+
+            #region for the trolls
+
+            if (settings.funny_descriptions)
+            {
+
+                if (key == "NAME_MEGA_MOSS_CHARGER") res = "UNKILLABLE MOSS CHARGER";
+                else if (key == "GG_S_MEGAMOSS")
+                    res = "The True Champion of the Gods. Try as hard as you want, you can not kill it";
+                else if (key == "MEGA_MOSS_SUPER") res = "UNKILLABLE";
+                else if (key == "MEGA_MOSS_SUB") res = "THE TRUE CHAMPION OF THE GODS";
+
+                else if (key == "GG_S_GRUZ") res = "My head hurts. Please dont make me slam my head again";
+                else if (key == "GG_S_BIGBUZZ") res = "Vicious God of running away";
+                else if (key == "GG_S_FLUKEMUM") res = "Alluring God of standing still";
+                else if (key == "GG_S_BIGBEES") res = "Gods of RNG";
+                else if (key == "GG_S_NOSK_HORNET") res = "Vicious God of running away, but worse";
+                else if (key == "GG_S_COLLECTOR") res = "The boss that gives nightmares to All Binding players";
+                else if (key == "GG_S_MIGHTYZOTE") res = "I like giving ear aches";
+                else if (key == "KNIGHT_STATUE_1"||key == "KNIGHT_STATUE_2"|| key == "KNIGHT_STATUE_3")
+                            res = "Did you really just spend all these hours grinding just to get this??";
+                else if (key == "GG_S_RADIANCE")
+                    res = "I'm the god of light and you insult me by referring to me as a tiny moth??";
+                else if (key == "GG_S_SLY") res = "Bug Yoda";
+                else if (key == "GG_S_GHOST_HU") res = "I love PANCAKES";
+                else if (key == "GG_S_GHOST_GORB") res = "Ascend with Gorb";
+                else if (key == "GG_S_SOULMASTER") res = "Teleporting freak";
+                else if (key == "GG_S_SOUL_TYRANT") res = "Teleporting freak v2";
+                else if (key == "GG_S_MAGEKNIGHT") res = "Am i really a boss?";
+                else if (key == "CHARM_NAME_2") res = "OP Compass";
+                else if (key == "CHARM_DESC_2")
+                    res = "Its the most OP charm in the game.<br><br>Wear this charm to get good";
+                else
+                {
+                    res = current;
+                }
+
+                return current == orig;
+            }
+            #endregion
+            
+            
             res = current;
             return true;
         }

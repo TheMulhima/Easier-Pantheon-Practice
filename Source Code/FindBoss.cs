@@ -13,27 +13,26 @@ namespace Easier_Pantheon_Practice
 {
     public class FindBoss : MonoBehaviour
     {
-        private const int x_value = 0, y_value = 1;             //to make the move position function more readable
+        private const int x_value = 0, y_value = 1; //to make the move position function more readable
         private static int damage_to_be_dealt, current_move;
-        public static bool altered, SOB;                        //to allow some functions to be readable
+        public static bool altered, SOB; //to allow some functions to be readable
         private static bool loop;
         private static string PreviousScene, SceneToLoad;
-        private static string MapZone;
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
 
         private static readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
         {
-            { 0 , new List<float>{11f,36.4f } },//bench
-            { 1 , new List<float>{207f,6.4f } },//gpz
+            {0, new List<float> {11f, 36.4f}}, //bench
+            {1, new List<float> {207f, 6.4f}}, //gpz
         };
 
-        
+
         //Dict for bosses that have only 1 boss in them
         private static readonly Dictionary<string, string> _BossSceneName = new Dictionary<string, string>()
         {
             {"GG_Gruz_Mother_V", "Giant Fly"},
-            {"GG_False_Knight","False Knight New" },
+            {"GG_False_Knight", "False Knight New"},
             {"GG_Mega_Moss_Charger", "Mega Moss Charger"},
             {"GG_Hornet_1", "Hornet Boss 1"},
             {"GG_Ghost_Gorb_V", "Ghost Warrior Slug"},
@@ -53,7 +52,7 @@ namespace Easier_Pantheon_Practice
             {"GG_Grimm", "Grimm Boss"},
             {"GG_Uumuu_V", "Mega Jellyfish GG"},
             {"GG_Nosk_Hornet", "Hornet Nosk"},
-            {"GG_Sly", "Sly Boss" },
+            {"GG_Sly", "Sly Boss"},
             {"GG_Hornet_2", "Hornet Boss 2"},
             {"GG_Crystal_Guardian_2", "Zombie Beam Miner Rematch"},
             {"GG_Lost_Kin", "Lost Kin"},
@@ -68,7 +67,7 @@ namespace Easier_Pantheon_Practice
             {"GG_Radiance", "Absolute Radiance"},
             {"GG_Nosk", "Nosk"},
             {"GG_Nosk_V", "Nosk"},
-            {"GG_Vengefly","Giant Buzzer Col"},
+            {"GG_Vengefly", "Giant Buzzer Col"},
             {"GG_Gruz_Mother", "Giant Fly"},
             {"GG_Ghost_Gorb", "Ghost Warrior Slug"},
             {"GG_Mage_Knight", "Mage Knight"},
@@ -81,7 +80,7 @@ namespace Easier_Pantheon_Practice
             {"GG_Ghost_Markoth", "Ghost Warrior Markoth"},
         };
 
-        
+
         //Dict for bosses that have only 2 boss in them
         private static readonly Dictionary<string, List<string>> SemiExceptions_BossSceneName =
             new Dictionary<string, List<string>>()
@@ -93,7 +92,7 @@ namespace Easier_Pantheon_Practice
                 {"GG_Nailmasters", new List<string>() {"Oro", "Mato"}},
                 {"GG_God_Tamer", new List<string>() {"Lancer", "Lobster"}},
             };
-        
+
         //Dict for bosses that have more than 2 boss in them
         private static readonly List<string> Exceptions_BossSceneName = new List<string>()
         {
@@ -112,14 +111,7 @@ namespace Easier_Pantheon_Practice
             ModHooks.BeforeSceneLoadHook += BeforeSceneChange;
             USceneManager.sceneLoaded += SceneManager_sceneLoaded;
             On.BossSceneController.DoDreamReturn += DoDreamReturn;
-            if (EasierPantheonPractice.GlobalSaveData.allow_reloads_in_loads)
-            {
-                GameManager.instance.gameObject.AddComponent<HotkeysDuringLoad>();
-            }
-            else
-            {
-                ModHooks.HeroUpdateHook += HeroUpdateFunction;
-            }
+            ModHooks.HeroUpdateHook += HeroUpdateFunction;
             ModHooks.AfterTakeDamageHook += Only1Damage;
         }
 
@@ -131,21 +123,20 @@ namespace Easier_Pantheon_Practice
             {
                 if (PreviousScene != "GG_Workshop") return;
             }
-            
-            
+
+
             altered = false;
             SOB = true;
-            CurrentBoss = CurrentBoss_1 = ""; 
+            CurrentBoss = CurrentBoss_1 = "";
 
 
             if (DoesDictContain(arg0.name))
             {
                 StartCoroutine(ApplySettings());
 
-                if (EasierPantheonPractice.GlobalSaveData.only_apply_settings) return;
-                
+                if (EasierPantheonPractice.settings.only_apply_settings) return;
+
                 SceneToLoad = arg0.name;
-                MapZone = GameManager.instance.GetCurrentMapZone();
                 if (Exceptions_BossSceneName.Contains(arg0.name))
                 {
                     switch (arg0.name)
@@ -170,21 +161,22 @@ namespace Easier_Pantheon_Practice
                         CurrentBoss = SemiExceptions_BossSceneName[arg0.name][0];
                         CurrentBoss_1 = SemiExceptions_BossSceneName[arg0.name][1];
                     }
+
                     p5Boss();
                 }
-                
+
             }
         }
 
         #region Find and alter bosses
-        
-        private IEnumerator ChangeBoss(string BossName,bool wait = true)
+
+        private IEnumerator ChangeBoss(string BossName, bool wait = true)
         {
             //Thank you to redfrog for this non-cursed code (before it was a while loop which didnt make sense)
             if (wait) yield return new WaitUntil(() => GameObject.Find(BossName));
             GameObject.Find(BossName).AddComponent<BossNerf>();
 
-            
+
         }
 
         private void p5Boss()
@@ -193,7 +185,7 @@ namespace Easier_Pantheon_Practice
 
             if (CurrentBoss_1 != "") StartCoroutine(ChangeBoss(CurrentBoss_1));
         }
-        
+
         private IEnumerator SistersOfBattle(bool isSOB)
         {
             SOB = isSOB;
@@ -201,15 +193,15 @@ namespace Easier_Pantheon_Practice
             CurrentBoss_1 = "Mantis Lord S";
 
             StartCoroutine(ChangeBoss(CurrentBoss));
-            
+
             yield return new WaitUntil(() => GameObject.Find(CurrentBoss_1 + "1")); //Waits for phase 2
-            
+
             for (int i = 1; i <= (SOB ? 3 : 2); i++)
             {
-                StartCoroutine(ChangeBoss(CurrentBoss_1 + i.ToString(),false));
+                StartCoroutine(ChangeBoss(CurrentBoss_1 + i.ToString(), false));
             }
         }
-        
+
         private IEnumerator WatcherKnight()
         {
             CurrentBoss = CurrentBoss_1 = "Black Knight ";
@@ -217,24 +209,25 @@ namespace Easier_Pantheon_Practice
             yield return new WaitUntil(() => GameObject.Find(CurrentBoss + "1"));
             for (int i = 1; i <= 6; i++)
             {
-                StartCoroutine(ChangeBoss(CurrentBoss + i.ToString(),false));
+                StartCoroutine(ChangeBoss(CurrentBoss + i.ToString(), false));
             }
         }
 
         #endregion
 
         #region Setup Player
+
         private IEnumerator ApplySettings()
         {
             //waiting
             yield return new WaitForFinishedEnteringScene();
-            var settings = EasierPantheonPractice.GlobalSaveData;
+            var settings = EasierPantheonPractice.settings;
             var BSC = BossSceneController.Instance;
             var HC = HeroController.instance;
 
-            
+
             //remove health and add lifeblood
-            if (!(settings.hitless_practice||BSC.BossLevel == 2))//checks for hitless practice or radiant fights
+            if (!(settings.hitless_practice || BSC.BossLevel == 2)) //checks for hitless practice or radiant fights
             {
                 HC.TakeHealth(settings.remove_health);
 
@@ -244,20 +237,21 @@ namespace Easier_Pantheon_Practice
 
             //adds soul
             HC.AddMPCharge(settings.soul);
-            
+
             //makes sure the HUD updates
             yield return null;
             HeroController.instance.AddMPCharge(1);
             HeroController.instance.AddMPCharge(-1);
         }
-        
+
         private static int Only1Damage(int hazardType, int damage)
         {
-            if (EasierPantheonPractice.GlobalSaveData.only_apply_settings) return damage;
-            if (!(loop||(DoesDictContain(GameManager.instance.GetSceneNameString()) && PreviousScene == "GG_Workshop"))) return damage;
+            if (EasierPantheonPractice.settings.only_apply_settings) return damage;
+            if (!(loop || (DoesDictContain(GameManager.instance.GetSceneNameString()) &&
+                           PreviousScene == "GG_Workshop"))) return damage;
             damage_to_be_dealt = BossSceneController.Instance.BossLevel == 1 ? (damage / 2) : damage;
 
-            if (EasierPantheonPractice.GlobalSaveData.hitless_practice) damage_to_be_dealt = 1000;
+            if (EasierPantheonPractice.settings.hitless_practice) damage_to_be_dealt = 1000;
 
             return damage_to_be_dealt;
         }
@@ -266,18 +260,23 @@ namespace Easier_Pantheon_Practice
 
         #region hotkeys
 
-        public void HeroUpdateFunction() => Hotkeys();
+        public void HeroUpdateFunction()
+        {
+            if (!EasierPantheonPractice.settings.allow_reloads_in_loads) Hotkeys();
+        }
+        public void Update()
+        {
+            if (EasierPantheonPractice.settings.allow_reloads_in_loads) Hotkeys();
+        }
 
         public static void Hotkeys()
         {
-            var settings = EasierPantheonPractice.GlobalSaveData;
+            var settings = EasierPantheonPractice.settings;
             var HC = HeroController.instance;
 
 
             string theCurrentScene = GameManager.instance.GetSceneNameString();
 
-
-            //if (Input.GetKeyDown(settings.Key_return_to_hog))
             if (settings.keybinds.Key_return_to_hog.WasPressed)
             {
                 if (HC.acceptingInput)
@@ -289,7 +288,6 @@ namespace Easier_Pantheon_Practice
                 }
             }
 
-            //if (Input.GetKeyDown(settings.Key_teleport_around_HoG))
             if (settings.keybinds.Key_teleport_around_HoG.WasPressed)
             {
                 if (theCurrentScene == "GG_Workshop")
@@ -300,8 +298,6 @@ namespace Easier_Pantheon_Practice
                 }
             }
 
-
-            //if (Input.GetKeyUp(settings.Key_Reload_Boss))
             if (settings.keybinds.Key_Reload_Boss.WasPressed)
             {
                 if (loop || (DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
@@ -326,7 +322,7 @@ namespace Easier_Pantheon_Practice
             GM.ResetSemiPersistentItems();
             HC.enterWithoutInput = true;
             HC.AcceptInput();
-            
+
             GM.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
                 SceneName = SceneToLoad,
@@ -342,7 +338,7 @@ namespace Easier_Pantheon_Practice
         {
             yield return new WaitForFinishedEnteringScene();
             yield return null;
-            yield return new WaitForSeconds(1f);//this line differenciates this function from ApplySettings
+            yield return new WaitForSeconds(1f); //this line differenciates this function from ApplySettings
             HeroController.instance.AddMPCharge(1);
             HeroController.instance.AddMPCharge(-1);
         }
@@ -356,14 +352,14 @@ namespace Easier_Pantheon_Practice
                 EntryDelay = 0,
                 PreventCameraFadeOut = true,
                 EntryGateName = "left1",
-                Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory, 
+                Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
             });
             yield return new WaitForFinishedEnteringScene();
             yield return new WaitForSceneLoadFinish();
             yield return new WaitUntil(() => HeroController.instance.acceptingInput);
             HeroController.instance.transform.position = OldPosition;
         }
-        
+
         #endregion
 
         public static void LoadBossInLoop()
@@ -374,7 +370,7 @@ namespace Easier_Pantheon_Practice
 
         #region Misc Functions
 
-        
+
         private string BeforeSceneChange(string sceneName)
         {
             PreviousScene = GameManager.instance.sceneName;
@@ -382,6 +378,7 @@ namespace Easier_Pantheon_Practice
             {
                 OldPosition = HeroController.instance.transform.position;
             }
+
             return sceneName;
         }
 
@@ -391,17 +388,21 @@ namespace Easier_Pantheon_Practice
             loop = false;
             orig(self);
         }
+
         private static bool DoesDictContain(string KeyToSearch)
         {
             return Exceptions_BossSceneName.Contains(KeyToSearch) || _BossSceneName.ContainsKey(KeyToSearch) ||
                    SemiExceptions_BossSceneName.ContainsKey(KeyToSearch);
         }
-        
-        private IEnumerator SceneLoaded() {yield return null;}
-        
-        
+
+        private IEnumerator SceneLoaded()
+        {
+            yield return null;
+        }
+
+
         #endregion
-        
+
         private void OnDestroy()
         {
             ModHooks.BeforeSceneLoadHook -= BeforeSceneChange;
@@ -409,16 +410,6 @@ namespace Easier_Pantheon_Practice
             On.BossSceneController.DoDreamReturn -= DoDreamReturn;
             ModHooks.AfterTakeDamageHook -= Only1Damage;
             ModHooks.HeroUpdateHook -= HeroUpdateFunction;
-            var hotkeysComponent = GameManager.instance?.gameObject.GetComponent<HotkeysDuringLoad>();
-            if (hotkeysComponent != null) Destroy(hotkeysComponent);
-        }
-    }
-//make a new monobehaviour for a very rare option so it isnt added if not needed.
-    public class HotkeysDuringLoad : MonoBehaviour
-    {
-        public void Update()
-        {
-            FindBoss.Hotkeys();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using InControl;
-using Modding;
+using Newtonsoft.Json;
+using Modding.Converters;
 
 namespace Easier_Pantheon_Practice
 {
@@ -10,8 +11,10 @@ namespace Easier_Pantheon_Practice
         public int soul = 0;
         public bool hitless_practice = false;
 
+        [JsonConverter(typeof(PlayerActionSetConverter))]
         public KeyBinds keybinds = new KeyBinds();
-        
+
+        public bool funny_descriptions = true;
         public bool only_apply_settings = false;
         public bool allow_reloads_in_loads = false;
     }
