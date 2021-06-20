@@ -1,4 +1,5 @@
-﻿using Modding;
+﻿using System;
+using Modding;
 using UnityEngine;
 using USceneManager = UnityEngine.SceneManagement.SceneManager;
 using Modding.Menu;
@@ -11,22 +12,27 @@ namespace Easier_Pantheon_Practice
         public EasierPantheonPractice() : base("Easier Pantheon Practice") { }
         public override string GetVersion() => "1.0.7";
 
-         public MenuScreen GetMenuScreen(MenuScreen modListMenu) 
+        private MenuScreen screen;
+
+        public MenuScreen GetMenuScreen(MenuScreen modListMenu) 
          {
+
              string[] maskvalues = new string[11];
              for (int i = 0; i < 10; i++)
              {
                  maskvalues[i] = i.ToString();
              }
-             string[] soulvalues = new string[199];
-             for (int i = 0; i < 199; i++)
-             {
-                 soulvalues[i] = i.ToString();
-             }
 
-             string[] boolvalues = {"False", "True"};
+             string[] soulvalues = new string[7];
+             for (int i = 0; i*33 <=198; i++)
+             {
+                 soulvalues[i] = (i*33).ToString();
+             }
              
-                return new MenuBuilder(UIManager.instance.UICanvas.gameObject, "Menu")
+             string[] boolvalues_def_false = {"False", "True"};
+             string[] boolvalues_def_true = {"True","False"};
+             
+             var mainmenu = new MenuBuilder(UIManager.instance.UICanvas.gameObject, "EPPMenu")
                     .CreateTitle("Easier Pantheon Practice Settings", MenuTitleStyle.vanillaStyle)
                     .CreateContentPane(RectTransformData.FromSizeAndPos(
                         new RelVector2(new Vector2(1920f, 903f)),
@@ -83,7 +89,7 @@ namespace Easier_Pantheon_Practice
                                     Options = soulvalues,
                                     ApplySetting = (_, i) =>
                                     {
-                                        settings.soul = i;
+                                        settings.soul = Int32.Parse(soulvalues[i]);
                                     },
                                     RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.soul),
                                     CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
@@ -93,7 +99,7 @@ namespace Easier_Pantheon_Practice
                                 new HorizontalOptionConfig
                                 {
                                     Label = "Hitless Practice",
-                                    Options = boolvalues,
+                                    Options = boolvalues_def_false,
                                     ApplySetting = (_, i) =>
                                     {
                                         settings.hitless_practice = i != 0;
@@ -119,13 +125,14 @@ namespace Easier_Pantheon_Practice
                                     Label = "Return To HoG",
                                     CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu)
                                 }
-                            ).AddKeybind(
-                                "TeleportAroundHoGBind",
-                                settings.keybinds.Key_teleport_around_HoG,
-                                new KeybindConfig
+                            ).AddMenuButton(
+                                "ExtraSettings",
+                                new MenuButtonConfig
                                 {
-                                    Label = "Teleport Around HoG",
-                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu)
+                                    Label = "Additional Settings",
+                                    SubmitAction = _ => UIManager.instance.UIGoToDynamicMenu(screen),
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                    Style = MenuButtonStyle.VanillaStyle
                                 }
                             );
                         }
@@ -148,7 +155,104 @@ namespace Easier_Pantheon_Practice
                         )
                     )
                     .Build();
-        }
+             
+             
+             
+             var builder = new MenuBuilder("ExtraSettings");
+             screen = builder.Screen;
+             builder.CreateTitle("Additional Settings", MenuTitleStyle.vanillaStyle)
+                    .CreateContentPane(RectTransformData.FromSizeAndPos(
+                        new RelVector2(new Vector2(1920f, 903f)),
+                        new AnchoredPosition(
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0f, -60f)
+                        )
+                    ))
+                    .CreateControlPane(RectTransformData.FromSizeAndPos(
+                        new RelVector2(new Vector2(1920f, 259f)),
+                        new AnchoredPosition(
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0f, -502f)
+                        )
+                    ))
+                    .SetDefaultNavGraph(new ChainedNavGraph())
+                    .AddContent(
+                        RegularGridLayout.CreateVerticalLayout(105f),
+                        c =>
+                        {
+                            c.AddHorizontalOption(
+                                "funny_descriptions",
+                                new HorizontalOptionConfig
+                                {
+                                    Label = "Funny Descriptions",
+                                    Options = boolvalues_def_true,
+                                    ApplySetting = (_, i) =>
+                                    {
+                                        settings.funny_descriptions = i == 0;
+                                    },
+                                    RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.funny_descriptions ? 0:1),
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                    Style = HorizontalOptionStyle.VanillaStyle
+                                }).AddHorizontalOption(
+                                    "only_apply_settings",
+                                    new HorizontalOptionConfig
+                                    {
+                                        Label = "Only Apply Settings",
+                                        Options = boolvalues_def_false,
+                                        ApplySetting = (_, i) =>
+                                        {
+                                            settings.only_apply_settings = i != 0;
+                                        },
+                                        RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.only_apply_settings ? 1:0),
+                                        CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                        Style = HorizontalOptionStyle.VanillaStyle
+                                    }).AddHorizontalOption(
+                                    "allow_reloads_in_loads",
+                                    new HorizontalOptionConfig
+                                    {
+                                        Label = "Can Reloads Boss in Loads",
+                                        Options = boolvalues_def_false,
+                                        ApplySetting = (_, i) =>
+                                        {
+                                            settings.allow_reloads_in_loads = i != 0;
+                                        },
+                                        RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.allow_reloads_in_loads ? 1:0),
+                                        CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                        Style = HorizontalOptionStyle.VanillaStyle
+                                    }).AddKeybind(
+                                "TeleportAroundHoGBind",
+                                settings.keybinds.Key_teleport_around_HoG,
+                                new KeybindConfig
+                                {
+                                    Label = "Move Around HoG",
+                                    CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu)
+                                },out var MainOptions);
+                        }
+                    )
+                    .AddControls(
+                        new SingleContentLayout(new AnchoredPosition(
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0.5f, 0.5f),
+                            new Vector2(0f, -64f)
+                        )),
+                        c => c.AddMenuButton(
+                            "BackButton",
+                            new MenuButtonConfig {
+                                Label = "Back",
+                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(mainmenu),
+                                SubmitAction = _ => UIManager.instance.UIGoToDynamicMenu(mainmenu),
+                                Style = MenuButtonStyle.VanillaStyle,
+                                Proceed = true
+                            }
+                        )
+                    )
+                    .Build();
+             
+             
+                return mainmenu;
+         }
          
          public static GlobalSettings settings { get; set; } = new GlobalSettings();
          public void OnLoadGlobal(GlobalSettings s) => EasierPantheonPractice.settings = s;
@@ -221,9 +325,9 @@ namespace Easier_Pantheon_Practice
             }
             #endregion
             
-            
-            res = current;
-            return true;
+            //dont wanna change anything
+            res = null;
+            return false;
         }
 
         private void Load_Mod()

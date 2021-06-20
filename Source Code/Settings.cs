@@ -17,6 +17,7 @@ namespace Easier_Pantheon_Practice
         public bool funny_descriptions = true;
         public bool only_apply_settings = false;
         public bool allow_reloads_in_loads = false;
+        public string increment_soul_in = "33";
     }
     public class KeyBinds : PlayerActionSet {
         public PlayerAction Key_return_to_hog;
