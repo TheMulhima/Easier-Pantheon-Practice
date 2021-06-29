@@ -1,10 +1,10 @@
-using System;
 using Modding;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using USceneManager = UnityEngine.SceneManagement.SceneManager;
 using UnityEngine;
 using System.Collections;
+using GlobalEnums;
 using UObject = UnityEngine.Object;
 
 
@@ -269,7 +269,7 @@ namespace Easier_Pantheon_Practice
             if (EasierPantheonPractice.settings.allow_reloads_in_loads) Hotkeys();
         }
 
-        public static void Hotkeys()
+        private static void Hotkeys()
         {
             var settings = EasierPantheonPractice.settings;
             var HC = HeroController.instance;
@@ -277,6 +277,11 @@ namespace Easier_Pantheon_Practice
 
             string theCurrentScene = GameManager.instance.GetSceneNameString();
 
+            if (Input.GetKeyDown("m"))
+            {
+                GameManager.instance.StartCoroutine(OpenModMenu());
+            }
+            
             if (settings.keybinds.Key_return_to_hog.WasPressed)
             {
                 if (HC.acceptingInput)
@@ -307,7 +312,17 @@ namespace Easier_Pantheon_Practice
             }
         }
 
-        public static void LoadBossScene()
+        private static IEnumerator OpenModMenu()
+        {
+            yield return GameManager.instance.PauseGameToggle();
+            
+            if(GameManager.instance.gameState == GameState.PAUSED) 
+            {
+                yield return UIManager.instance.GoToDynamicMenu(EasierPantheonPractice.MainMenu);
+            }
+        }
+
+        private static void LoadBossScene()
         {
             var HC = HeroController.instance;
             var GM = GameManager.instance;
@@ -362,7 +377,7 @@ namespace Easier_Pantheon_Practice
 
         #endregion
 
-        public static void LoadBossInLoop()
+        private static void LoadBossInLoop()
         {
             loop = true;
             LoadBossScene();
